@@ -1,0 +1,1554 @@
+// Copyright 1997, Humongous Entertainment Inc.
+
+// Each side has a set of data for the on screen information that can be changed easily in this
+// text file and immediately reflected in the game without compilation
+
+[SIDE0]
+	{
+	name=TAL;
+	nameprefix=TAL;
+	commander=talcom;
+	intgaf=TALINT;
+
+	font=COREFONT827;
+	fontgui=armbutt;
+	energycolor=208;
+	metalcolor=224;
+
+	[LOGO]
+		{ x1=132; y1=6; x2=152; y2=26; }
+
+	[ENERGYBAR]
+		{ x1=471; y1=11; x2=592; y2=13; }
+
+	[ENERGYNUM]
+		{ x1=509; y1=17; x2=529; y2=18; }
+
+	[ENERGYMAX]
+		{ x1=595; y1=17; x2=595; y2=1; }
+
+	[ENERGY0]
+		{ x1=470; y1=17; x2=468; y2=1; }
+
+	[METALBAR]
+		{ x1=218; y1=11; x2=339; y2=13; }
+
+	[METALNUM]
+		{ x1=258; y1=17; x2=278; y2=18; }
+
+	[METALMAX]
+		{ x1=341; y1=17; x2=341; y2=1; }
+
+	[METAL0]
+		{ x1=217; y1=17; x2=215; y2=1; }
+
+	[TOTALUNITS]
+		{ x1=560; y1=7; x2=583; y2=15; }
+
+	[TOTALTIME]
+		{ x1=605; y1=7; x2=628; y2=15; }
+
+	[ENERGYPRODUCED]
+		{ x1=609; y1=6; x2=609; y2=5; }
+
+	[ENERGYCONSUMED]
+		{ x1=609; y1=17; x2=609; y2=17; }
+
+	[METALPRODUCED]
+		{ x1=358; y1=6; x2=358; y2=5; }
+
+	[METALCONSUMED]
+		{ x1=358; y1=17; x2=358; y2=17; }
+
+	// All of these regions describe areas on the screen footer
+
+	[LOGO2]
+		{ x1=132; y1=454; x2=152; y2=474; }
+
+	[UNITNAME]
+		{ x1=217; y1=452; x2=217; y2=460; }
+
+	[DAMAGEBAR]
+		{ x1=172; y1=463; x2=262; y2=465; }
+
+	[UNITMETALMAKE]
+		{ x1=315; y1=465; x2=170; y2=478; }
+
+	[UNITMETALUSE]
+		{ x1=355; y1=465; x2=170; y2=478; }
+
+	[UNITENERGYMAKE]
+		{ x1=395; y1=465; x2=170; y2=468; }
+
+	[UNITENERGYUSE]
+		{ x1=435; y1=465; x2=170; y2=468; }
+
+	[MISSIONTEXT]
+		{ x1=385; y1=454; x2=400; y2=450; }
+
+	[UNITNAME2]
+		{ x1=555; y1=452; x2=555; y2=460; }
+
+	[DAMAGEBAR2]
+		{ x1=510; y1=463; x2=600; y2=465; }
+
+	[NAME]
+		{ x1=132; y1=454; x2=142; y2=460; }
+
+	[DESCRIPTION]
+		{ x1=132; y1=465; x2=142; y2=472; }
+
+	[RELOAD1]
+		{ x1=132; y1=450; x2=148; y2=458; }
+
+	[RELOAD2]
+		{ x1=132; y1=460; x2=148; y2=468; }
+
+	[RELOAD3]
+		{ x1=132; y1=470; x2=148; y2=478; }
+	}
+
+[SIDE1]
+	{
+	// Some of this deal with the side= that must be in the FBI for the AI to build the unit
+	// Some of this deal with the prefix gaf sequence,
+	// or the gaf files, must have for the left part of the ingame interface (GUI) of the race
+	// My knowledge is pretty muddy in this area. All I know for sure is the commander tag.
+	name=GOK;//ARM
+	nameprefix=GOK;//ARM
+	commander=GOKCOM;
+	intgaf=GOKINT;//ARMINT
+
+	font=console;
+	fontgui=armbutt;
+	energycolor=100;//208;
+	metalcolor=150;//224;
+
+	// Yes, you can use the values below to move the top bar and bottom bar of the GUI around
+	// For instance here I thickened the Energy and Metal bars
+
+	[LOGO]
+		{ x1=132; y1=5; x2=152; y2=25; }
+
+	[ENERGYBAR]
+		{ x1=471; y1=11; x2=598; y2=15; }
+
+	[ENERGYNUM]
+		{ x1=529; y1=18; x2=529; y2=18; }
+
+	[ENERGYMAX]
+		{ x1=595; y1=1; x2=595; y2=1; }
+
+	[ENERGY0]
+		{ x1=468; y1=1; x2=468; y2=1; }
+
+	[METALBAR]
+		{ x1=218; y1=11; x2=345; y2=15; }
+
+	[METALNUM]
+		{ x1=278; y1=18; x2=278; y2=18; }
+
+	[METALMAX]
+		{ x1=341; y1=1; x2=341; y2=1; }
+
+	[METAL0]
+		{ x1=215; y1=1; x2=215; y2=1; }
+
+	[TOTALUNITS]
+		{ x1=560; y1=7; x2=583; y2=15; }
+
+	[TOTALTIME]
+		{ x1=605; y1=7; x2=628; y2=15; }
+
+	[ENERGYPRODUCED]
+		{ x1=609; y1=5; x2=609; y2=5; }
+
+	[ENERGYCONSUMED]
+		{ x1=609; y1=17; x2=609; y2=17; }
+
+	[METALPRODUCED]
+		{ x1=358; y1=5; x2=358; y2=5; }
+
+	[METALCONSUMED]
+		{ x1=358; y1=17; x2=358; y2=17; }
+
+	// All of these regions describe areas on the screen footer
+
+	[LOGO2]
+		{ x1=132; y1=455; x2=152; y2=475; }
+
+	[UNITNAME]
+		{ x1=245; y1=452; x2=245; y2=460; }
+
+	[DAMAGEBAR]
+		{ x1=200; y1=463; x2=290; y2=465; }
+
+	[UNITMETALMAKE]
+		{ x1=350; y1=458; x2=170; y2=478; }
+
+	[UNITMETALUSE]
+		{ x1=350; y1=468; x2=170; y2=478; }
+
+	[UNITENERGYMAKE]
+		{ x1=400; y1=458; x2=170; y2=468; }
+
+	[UNITENERGYUSE]
+		{ x1=400; y1=468; x2=170; y2=468; }
+
+	[MISSIONTEXT]
+		{ x1=385; y1=449; x2=400; y2=450; }
+
+	[UNITNAME2]
+		{ x1=555; y1=452; x2=555; y2=460; }
+
+	[DAMAGEBAR2]
+		{ x1=510; y1=463; x2=600; y2=465; }
+
+	[NAME]
+		{ x1=132; y1=452; x2=142; y2=460; }
+
+	[DESCRIPTION]
+		{ x1=132; y1=465; x2=142; y2=472; }
+
+	[RELOAD1]
+		{ x1=132; y1=450; x2=148; y2=458; }
+
+	[RELOAD2]
+		{ x1=132; y1=460; x2=148; y2=468; }
+
+	[RELOAD3]
+		{ x1=132; y1=470; x2=148; y2=478; }
+	}
+
+[SIDE2]
+	{
+	name=TLL;
+	nameprefix=TLL;
+	commander=TLLCOM;
+	intgaf=TLLINT;
+
+	font=console;
+	fontgui=armbutt;
+	energycolor=100;
+	metalcolor=150;
+
+	[LOGO]
+		{ x1=132; y1=5; x2=152; y2=25; }
+
+	[ENERGYBAR]
+		{ x1=471; y1=12; x2=598; y2=14; }
+
+	[ENERGYNUM]
+		{ x1=529; y1=18; x2=529; y2=18; }
+
+	[ENERGYMAX]
+		{ x1=595; y1=1; x2=595; y2=1; }
+
+	[ENERGY0]
+		{ x1=468; y1=1; x2=468; y2=1; }
+
+	[METALBAR]
+		{ x1=218; y1=12; x2=345; y2=14; }
+
+	[METALNUM]
+		{ x1=278; y1=18; x2=278; y2=18; }
+
+	[METALMAX]
+		{ x1=341; y1=1; x2=341; y2=1; }
+
+	[METAL0]
+		{ x1=215; y1=1; x2=215; y2=1; }
+
+	[TOTALUNITS]
+		{ x1=560; y1=7; x2=583; y2=15; }
+
+	[TOTALTIME]
+		{ x1=605; y1=7; x2=628; y2=15; }
+
+	[ENERGYPRODUCED]
+		{ x1=609; y1=5; x2=609; y2=5; }
+
+	[ENERGYCONSUMED]
+		{ x1=609; y1=17; x2=609; y2=17; }
+
+	[METALPRODUCED]
+		{ x1=358; y1=5; x2=358; y2=5; }
+
+	[METALCONSUMED]
+		{ x1=358; y1=17; x2=358; y2=17; }
+
+	// All of these regions describe areas on the screen footer
+
+	[LOGO2]
+		{ x1=132; y1=455; x2=152; y2=475; }
+
+	[UNITNAME]
+		{ x1=245; y1=452; x2=245; y2=460; }
+
+	[DAMAGEBAR]
+		{ x1=200; y1=463; x2=290; y2=465; }
+
+	[UNITMETALMAKE]
+		{ x1=350; y1=458; x2=170; y2=478; }
+
+	[UNITMETALUSE]
+		{ x1=350; y1=468; x2=170; y2=478; }
+
+	[UNITENERGYMAKE]
+		{ x1=400; y1=458; x2=170; y2=468; }
+
+	[UNITENERGYUSE]
+		{ x1=400; y1=468; x2=170; y2=468; }
+
+	[MISSIONTEXT]
+		{ x1=385; y1=449; x2=400; y2=450; }
+
+	[UNITNAME2]
+		{ x1=555; y1=452; x2=555; y2=460; }
+
+	[DAMAGEBAR2]
+		{ x1=510; y1=463; x2=600; y2=465; }
+
+	[NAME]
+		{ x1=132; y1=452; x2=142; y2=460; }
+
+	[DESCRIPTION]
+		{ x1=132; y1=465; x2=142; y2=472; }
+
+	[RELOAD1]
+		{ x1=132; y1=450; x2=148; y2=458; }
+
+	[RELOAD2]
+		{ x1=132; y1=460; x2=148; y2=468; }
+
+	[RELOAD3]
+		{ x1=132; y1=470; x2=148; y2=478; }
+	}
+
+[CANBUILD]
+	{
+	[GOKCOM]
+		{
+		canbuild1=goksolar;
+		canbuild2=GOKHSOLAR;
+		canbuild3=GOKMEXP2;
+		canbuild4=GOKCONVERTORP2;
+		canbuild5=GOKCELL;
+		canbuild6=GOKTERRA;
+
+		canbuild7=GOKAERO;
+		canbuild8=GOKUMEX;
+		canbuild9=GOKUGENER;
+		canbuild10=GOKHYDRO;
+		canbuild11=GOKRADAR;
+		canbuild12=GOKSONAR;
+
+		canbuild13=GOKLASER;
+		canbuild14=GOKSAM;
+		canbuild15=GOKBALASTER;
+		canbuild16=GOKHSAM;
+		canbuild17=GOKTORPEDO;
+
+		canbuild18=goksolarP2;
+
+		}
+	[GOKTERRA]
+		{
+		canbuild1=GOKBVEHIC;
+		canbuild2=GOKSUPBLEV;
+		canbuild3=GOKSCOUTDROID;
+		canbuild4=GOKINFDROID;
+		canbuild5=GOKPULSETANK;
+		canbuild6=GOKROCKTANK;
+		canbuild7=GOKMEDLASTANK;
+		canbuild8=GOKSTARTANK;
+		canbuild9=GOKDEFDROID;
+		canbuild10=GOKSENSORTANK;
+		canbuild11=GOKZEALOT;
+		canbuild12=GOKSTEALTH;
+		}
+
+
+	[GOKAERO]
+		{
+		canbuild1=GOKBDRONE;
+		canbuild2=GOKSCOUTDRONE;
+		canbuild3=GOKPULSEDRONE;
+		canbuild4=GOKLIBOMBER;
+		canbuild5=GOKTRANSPORT;
+		}
+
+	[GOKHYDRO]
+		{
+		canbuild1=GOKBSUB;
+		canbuild2=GOKBDRONE;
+		canbuild3=GOKASSUB;
+		canbuild4=GOKARTBOAT;
+		canbuild5=GOKASBOAT;
+		}
+
+	[GOKSTEALTH]
+		{
+		canbuild1=goksolar;
+		canbuild2=GOKHSOLAR;
+		canbuild3=GOKMEXP2;
+		canbuild4=GOKCONVERTORP2;
+		canbuild5=GOKCELL;
+		canbuild6=GOKTERRA;
+
+		canbuild7=GOKAERO;
+		canbuild8=GOKUMEX;
+		canbuild9=GOKUGENER;
+		canbuild10=GOKHYDRO;
+		canbuild11=GOKRADAR;
+		canbuild12=GOKSONAR;
+
+		canbuild13=GOKLASER;
+		canbuild14=GOKSAM;
+		canbuild15=GOKBALASTER;
+		canbuild16=GOKHSAM;
+		canbuild17=GOKTORPEDO;
+
+		canbuild18=goksolarP2;
+		}
+
+	[GOKBVEHIC]
+		{
+		canbuild1=goksolar;
+		canbuild2=GOKMEXP2;
+		canbuild3=GOKCONVERTORP2;
+		canbuild4=GOKCELL;
+		canbuild5=GOKTHERMAL;
+		canbuild6=GOKHSOLAR;
+		canbuild7=GOKUMEX;
+
+		canbuild8=GOKUSTORAGE;
+		canbuild9=GOKHSAM;
+		canbuild10=GOKTORPEDO;
+		canbuild11=GOKAERO;
+		canbuild12=GOKTERRA;
+		canbuild13=GOKASSEMBLY;
+		canbuild14=GOKHYDRO;
+
+		canbuild15=GOKSAM;
+		canbuild16=GOKBALASTER;
+		canbuild17=GOKLASER;
+		canbuild18=GOKART;
+		canbuild19=GOKSTARSILO;
+		canbuild20=GOKGUARDIAN;
+		canbuild21=GOKASP;
+
+		canbuild22=GOKRADAR;
+		canbuild23=GOKSONAR;
+		canbuild24=goksolarP2;
+
+		}
+
+	[GOKBDRONE]
+		{
+		canbuild1=goksolar;
+		canbuild2=GOKMEXP2;
+		canbuild3=GOKCONVERTORP2;
+		canbuild4=GOKCELL;
+		canbuild5=GOKTHERMAL;
+		canbuild6=GOKHSOLAR;
+		canbuild7=GOKUWSTARPORT;
+
+		canbuild8=GOKUSTORAGE;
+		canbuild9=GOKHSAM;
+		canbuild10=GOKTORPEDO;
+		canbuild11=GOKAERO;
+		canbuild12=GOKTERRA;
+		canbuild13=GOKHYDRO;
+		canbuild14=GOKSTARPORT;
+
+		canbuild15=GOKSAM;
+		canbuild16=GOKBALASTER;
+		canbuild17=GOKLASER;
+		canbuild18=GOKART;
+		canbuild19=GOKSTARSILO;
+		canbuild20=GOKGUARDIAN;
+		canbuild21=GOKASP;
+
+		canbuild22=GOKRADAR;
+		canbuild23=GOKSONAR;
+		canbuild24=GOKUMEX;		
+		canbuild25=goksolarP2;
+		
+		}
+
+	[GOKBSUB]
+		{
+		canbuild1=goksolar;
+		canbuild2=GOKUMEX;
+		canbuild3=GOKCONVERTORP2;
+		canbuild4=GOKUSTORAGE;
+		canbuild5=GOKUFUSION;
+		canbuild6=GOKSONAR;
+
+		canbuild7=GOKHYDRO;
+		canbuild8=GOKSCAFFOLD;
+		canbuild9=GOKHSAM;
+		canbuild10=GOKTORPEDO;
+		canbuild11=GOKASP;
+		canbuild12=GOKUWSTARPORT;
+		canbuild13=GOKHSOLAR;
+		}
+	[GOKASSEMBLY]
+		{
+		canbuild1=GOKLABORVEHIC;
+		canbuild2=GOKARTTANK;
+		canbuild3=GOKHEAVYDROID;
+		canbuild4=GOKHEAVYTANK;
+		canbuild5=GOKEVERCHOSEN;
+		canbuild6=GOKLEVIATHAN;
+		}
+
+	[GOKLABORVEHIC]
+		{
+		canbuild1=GOKFUSION;
+		canbuild2=GOKHMEX;
+		canbuild3=GOKSTORAGE;
+		canbuild4=GOKPYLON;
+		canbuild5=GOKNEXUS;
+		canbuild6=GOKTERRA;
+
+		canbuild7=GOKFLEETBAY;
+		canbuild8=GOKFURNACE;
+		canbuild9=GOKIONCANNON;
+		canbuild10=GOKLRSAM;
+		canbuild11=GOKFLAK;
+		canbuild12=GOKDCANNON;
+
+		canbuild13=GOKBARRAGE;
+		canbuild14=GOKGUARDIAN;
+		canbuild15=GOKPILLAR;
+		canbuild16=GOKASSEMBLY;
+		canbuild17=GOKUWSTARPORT;
+
+		canbuild18=GOKJAMMER;
+		}
+
+	[GOKLABORDRONE]
+		{
+		canbuild1=GOKFUSION;
+		canbuild2=GOKHMEX;
+		canbuild3=GOKSTORAGE;
+		canbuild4=GOKPYLON;
+		canbuild5=GOKNEXUS;
+		canbuild6=GOKAERO;
+
+		canbuild7=GOKFLEETBAY;
+		canbuild8=GOKFURNACE;
+		canbuild9=GOKIONCANNON;
+		canbuild10=GOKLRSAM;
+		canbuild11=GOKFLAK;
+		canbuild12=GOKDCANNON;
+
+		canbuild13=GOKBARRAGE;
+		canbuild14=GOKGUARDIAN;
+		canbuild15=GOKPILLAR;
+		canbuild16=GOKSTARPORT;
+		canbuild17=GOKUWSTARPORT;
+
+		canbuild18=GOKJAMMER;
+		}
+
+	[GOKSTARPORT]
+		{
+		canbuild1=GOKLABORDRONE;
+		canbuild2=GOKSPYDRONE;
+		canbuild3=GOKBOMBER;
+		canbuild4=GOKGUNSHIP;
+		canbuild5=GOKASGUNSHIP;
+		canbuild6=GOKINTERCEPTOR;
+
+		canbuild7=GOKDROPSHIP;
+		canbuild8=GOKFIGDRONE;
+		canbuild9=GOKPRISMLEV;
+		}
+	[GOKUWSTARPORT]
+		{
+		canbuild1=GOKLABORDRONE;
+		canbuild2=GOKUWSPYDRONE;
+		canbuild3=GOKUWFIGDRONE;
+		canbuild4=GOKUWGUNSHIP;
+		canbuild5=GOKUWINTERCEPTOR;
+		}
+	[GOKSCAFFOLD]
+		{
+		canbuild1=GOKLABORDRONE;
+		canbuild2=GOKSTARBOAT;
+		canbuild3=GOKBATTLECRUISER;
+		canbuild4=GOKBARRAGESHIP;
+		canbuild5=GOKPRISMLEV;
+		canbuild6=GOKUWCARRIER;
+		}
+	[GOKFLEETBAY]
+		{
+		canbuild1=GOKTEMPEST;
+		canbuild2=GOKCARRIER;
+		canbuild3=GOKZENITH;
+		canbuild4=GOKUWCARRIER;
+		}
+	[GOKZENITH]
+		{
+		canbuild1=GOKCITADEL;
+		}
+
+	[TLLCOM]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLLMT;
+		canbuild24=TLLLMTNS;
+		canbuild25=TLLHP;
+		canbuild26=TLLHPNS;			
+		}
+	[TLLVP]
+		{
+		canbuild1=TLLCV;
+		canbuild2=TLLGLADIUS;
+		canbuild3=TLLARIMAN;
+		canbuild4=TLLARES;
+		canbuild5=TLLANNOUNCER;
+		canbuild6=TLLHOPLIT;
+		}
+	[TLLLAB]
+		{
+		canbuild1=TLLCK;
+		canbuild2=TLLBUG;
+		canbuild3=TLLPRIVATE;
+		canbuild4=TLLpbot;
+		canbuild5=TLLFIRERAISER;
+		canbuild6=TLLFIRESTARTER;
+		}
+	[TLLAP]
+		{
+		canbuild1=TLLCA;
+		canbuild2=tllprob;
+		canbuild3=tllfight;
+		canbuild4=tllcop1;
+		canbuild5=TLLBOMBER;
+		canbuild6=TLLTplane;
+		}
+	[TLLSY]
+		{
+		canbuild1=TLLCS;
+		canbuild2=TLLOTTER;
+		canbuild3=TLLVIOLATOR;
+		canbuild4=TLLboat2;
+		canbuild5=TLLPLUNGER;
+		canbuild6=TLLAMBASSADOR;
+		}
+	[TLLHP]
+		{
+		canbuild1=TLLCHOVER;
+		canbuild2=TLLHOVERLIGHT;
+		canbuild3=TLLhovergauss;
+		canbuild4=tllhoverrocket;
+		canbuild5=TLLHOVERMISSILE;
+		canbuild6=TLLhplasma;
+		}
+	[TLLHPNS]
+		{
+		canbuild1=TLLCHOVER;
+		canbuild2=TLLHOVERLIGHT;
+		canbuild3=TLLhovergauss;
+		canbuild4=tllhoverrocket;
+		canbuild5=TLLHOVERMISSILE;
+		canbuild6=TLLhplasma;
+		}
+	[TLLCV]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLAVP;
+		canbuild24=TLLHP;
+		canbuild25=TLLHLT;
+		canbuild26=TLLLBT;
+		canbuild27=TLLLMT;
+		canbuild28=TLLGEO;
+		}
+	[TLLCK]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLALAB;
+		canbuild24=TLLHP;
+		canbuild25=TLLHLT;
+		canbuild26=TLLLBT;
+		canbuild27=TLLLMT;
+		canbuild28=TLLGEO;
+		}
+	[TLLCA]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLAAP;
+		canbuild24=TLLHP;
+		canbuild25=TLLHLT;
+		canbuild26=TLLLBT;
+		canbuild27=TLLLMT;
+		canbuild28=TLLGEO;
+		}
+	[TLLCS]
+		{
+		canbuild1=TllTIDE;
+		canbuild2=TLLUWMEX;
+		canbuild3=TllWMconv;
+		canbuild4=TLLSY;
+		canbuild5=TLLUWMStorage;
+		canbuild6=TLLUWEStorage;
+
+		canbuild7=tlltorp;
+		canbuild8=TLLSONAR;
+		canbuild9=TLLLMTNS;
+		canbuild10=TLLHLTNS;
+		canbuild11=TLLASY;
+		}
+	[TLLCHOVER]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLHPNS;
+		canbuild24=TLLHP;
+		canbuild25=TLLHLT;
+		canbuild26=TLLLBT;
+		canbuild27=TLLLMT;
+		canbuild28=TLLGEO;
+		}
+	[TLLAVP]
+		{
+		canbuild1=TLLACV;
+		canbuild2=TLLSALAMANDER;
+		canbuild3=TLLCOYOTE;
+		canbuild4=TLLLOKI;
+		canbuild5=TLLCONVINCER;
+		canbuild6=TLLPUNCHER;
+		canbuild7=TLLDIVINE;
+		canbuild8=TLLOBSCURER;
+		}
+
+	[TLLALAB]
+		{
+		canbuild1=TLLACK;
+		canbuild2=TLLARCHNANO;
+		canbuild3=TLLAAK;
+		canbuild4=TLLARTYBOT;
+		canbuild5=TLLBURNER;
+
+		canbuild6=TLLeldar;
+		canbuild7=TLLLASBOT;
+		canbuild8=TLLSNIPER;
+		canbuild9=TLLOBSERVER;
+		canbuild10=TLLCONFUSER;
+
+		canbuild11=TLLDECOM;
+		canbuild12=tllturtle;
+		canbuild13=TLLHRK;
+		canbuild14=TLLCRAWLB;
+		canbuild15=TLLAMPHiBOT;
+		}
+
+	[TLLAAP]
+		{
+		canbuild1=TLLACA;
+		canbuild2=TLLRSPLANE;
+		canbuild3=tlladvfight;
+		canbuild4=tllcopter;
+		canbuild5=tllabomber;
+		canbuild6=TLLTORPP;
+		canbuild7=TLLRobber;
+		}
+
+	[TLLASY]
+		{
+		canbuild1=TLLACS;
+		canbuild2=TLLBATS2;
+		canbuild3=TLLEQUALIZER;
+		canbuild4=TLLVISITOR;
+		canbuild5=TLLSTING;
+		canbuild6=TLLASSHIP;
+		canbuild7=TLLGIANT;
+		canbuild8=TLLVIKING;
+		canbuild9=TLLMIXER;
+		canbuild10=TLLMANTA;
+		}
+	[TLLACV]
+		{
+		canbuild1=TLLVP;
+		canbuild2=TLLAVP;
+		canbuild3=TLLAMEX;
+		canbuild4=Tlladvsolar;
+		canbuild5=tllammaker;
+		canbuild6=TLLMEDFUSION;
+
+		canbuild7=TLLHTCP;
+		canbuild8=TLLTARG;
+		canbuild9=tllARAD;
+		canbuild10=tllstuner;
+		canbuild11=tllplasma;
+		canbuild12=TLLSAM;
+		
+		canbuild13=TLLFLAK;
+		canbuild14=TLLHMT;
+		canbuild15=TLLOBLITERATOR;
+		canbuild16=TLLLRPT;
+		canbuild17=TLLEMP;
+		canbuild18=TLLSILO;
+		canbuild19=TLLASP;
+		canbuild20=TLLshoretorp;
+		canbuild21=TLLtower;
+		}
+	[TLLACK]
+		{
+		canbuild1=TLLLAB;
+		canbuild2=TLLALAB;
+		canbuild3=TLLAMEX;
+		canbuild4=Tlladvsolar;
+		canbuild5=tllammaker;
+		canbuild6=TLLMEDFUSION;
+
+		canbuild7=TLLHTCP;
+		canbuild8=TLLTARG;
+		canbuild9=tllARAD;
+		canbuild10=tllstuner;
+		canbuild11=tllplasma;
+		canbuild12=TLLSAM;
+		
+		canbuild13=TLLFLAK;
+		canbuild14=TLLHMT;
+		canbuild15=TLLOBLITERATOR;
+		canbuild16=TLLLRPT;
+		canbuild17=TLLEMP;
+		canbuild18=TLLSILO;
+		canbuild19=TLLASP;
+		canbuild20=TLLshoretorp;
+		canbuild21=TLLtower;
+		}
+
+	[TLLACA]
+		{
+		canbuild1=TLLAP;
+		canbuild2=TLLAAP;
+		canbuild3=TLLAMEX;
+		canbuild4=Tlladvsolar;
+		canbuild5=tllammaker;
+		canbuild6=TLLMEDFUSION;
+
+		canbuild7=TLLHTCP;
+		canbuild8=TLLTARG;
+		canbuild9=tllARAD;
+		canbuild10=tllstuner;
+		canbuild11=tllplasma;
+		canbuild12=TLLSAM;
+		
+		canbuild13=TLLFLAK;
+		canbuild14=TLLHMT;
+		canbuild15=TLLOBLITERATOR;
+		canbuild16=TLLLRPT;
+		canbuild17=TLLEMP;
+		canbuild18=TLLSILO;
+		canbuild19=TLLASP;
+		canbuild20=TLLshoretorp;
+		canbuild21=TLLtower;
+		}
+	[TLLACS]
+		{
+		canbuild1=TLLSY;
+		canbuild2=TLLASY;
+		canbuild3=TLLAUWMEX;
+		canbuild4=tllammaker;
+		canbuild5=tllsolarNS;
+		canbuild6=tllatidal;
+
+		canbuild7=TLLNSSAM;
+		canbuild8=tlldcsta;
+		canbuild9=TLLuwjam;
+		canbuild10=TLLASONAR;
+		canbuild11=TLLPLAT;
+		canbuild12=TLLsubpen;
+		
+		canbuild13=TLLASPNS;
+		canbuild14=TLLUWFUSion;
+		canbuild15=tllatorp;
+		}
+	[TLLPLAT]
+		{
+		canbuild1=TLLCSA;
+		canbuild2=tllsonpl;
+		canbuild3=TLLSEAF;
+		canbuild4=tlltorpcop;
+		canbuild5=TLLSEAB;
+		}
+	[TLLCSA]
+		{
+		canbuild1=TLLMEXP2;
+		canbuild2=tllsolar;
+		canbuild3=TLLSOLARP2;
+		canbuild4=Tllwindtrap;
+		canbuild5=TLLMMP2;
+		canbuild6=tllMSTOR;
+
+		canbuild7=TLLESTOR;
+		canbuild8=TLLVP;
+		canbuild9=TLLLAB;
+		canbuild10=TLLAP;
+		canbuild11=TLLRADAR;
+		canbuild12=TLLTT;
+
+		canbuild13=TllTIDE;
+		canbuild14=TLLUWMEX;
+		canbuild15=TllWMconv;
+		canbuild16=TLLSY;
+		canbuild17=TLLUWMStorage;
+		canbuild18=TLLUWEStorage;
+
+		canbuild19=tlltorp;
+		canbuild20=TLLSONAR;
+
+		canbuild21=TLLweb;
+		canbuild22=TLLPULASER;
+		canbuild23=TLLHPNS;
+		canbuild24=TLLPLAT;
+		canbuild25=TLLHLT;
+		canbuild26=TLLLBT;
+		canbuild27=TLLLMT;
+		canbuild28=TLLGEO;
+
+		canbuild29=TLLLMTNS;
+		canbuild30=TLLHLTNS;
+		canbuild31=TLLSUBPEN;
+		canbuild32=TLLAAP;
+		}
+	[TLLSUBPEN]
+		{
+		canbuild1=TLLACSUB;
+		canbuild2=TLLCSUB;
+		canbuild3=TLLPLUNGER;
+		canbuild4=TLLORC;
+		canbuild5=TLLSQUID;
+		canbuild6=TLLWHALE;
+
+		canbuild7=TLLSHARK;
+		canbuild8=TLLMANTA;
+		canbuild9=tllturtle;
+		canbuild10=TLLSALAMANDER;
+		canbuild11=TLLDECOM;
+		canbuild12=TLLACV;
+		}
+	[TLLACSUB]
+		{
+		canbuild1=TLLSY;
+		canbuild2=TLLASY;
+		canbuild3=TLLAUWMEX;
+		canbuild4=tllammaker;
+		canbuild5=tllsolarNS;
+		canbuild6=tllatidal;
+
+		canbuild7=TLLNSSAM;
+		canbuild8=tlldcsta;
+		canbuild9=TLLuwjam;
+		canbuild10=TLLASONAR;
+		canbuild11=TLLPLAT;
+		canbuild12=TLLsubpen;
+		
+		canbuild13=TLLASPNS;
+		canbuild14=TLLUWFUSion;
+		canbuild15=tllatorp;
+		}
+	[TLLHTCP]
+		{
+		canbuild1=TLLHTCB;
+		canbuild2=TLLTHUMPER;
+		canbuild3=TLLBLIND;
+		canbuild4=TLLROASTER;
+		canbuild5=TLLTITAN;
+		canbuild6=TLLBind;
+		canbuild7=TLLmnt;
+		canbuild8=TLLdrag1;
+		}
+
+	[TLLHTCB]
+		{
+		canbuild1=TLLAVP;
+		canbuild2=TLLALAB;
+		canbuild3=TLLAAP;
+		canbuild4=TLLASY;
+		canbuild5=TLLCOLDFUS;
+		canbuild6=TLLEMSTOR;
+		canbuild7=TLLLRPT;
+		canbuild8=TLLTARG;
+		canbuild9=tllrlrpc;
+		canbuild10=TLLHTLRPC;
+		}
+
+	[TALCOM]
+		{
+		canbuild1=TALMEXP2;
+		canbuild2=TALSOLARP2;
+		canbuild3=TALMMKP2;
+		canbuild4=talwind;
+		canbuild5=talalex;
+		canbuild6=talap;
+
+		canbuild7=talvp;
+		canbuild8=talhlab;
+		canbuild9=talsgt;
+		canbuild10=talsy;
+		canbuild11=talsgt;
+		canbuild12=talrad;
+		
+		canbuild13=talestor;
+		canbuild14=talmstor;
+		canbuild15=talsy;
+		canbuild16=taluwmex;
+		canbuild17=taltide;
+		canbuild18=taluwmmk;
+		
+		canbuild19=taluwestor;
+		canbuild20=taluwmstor;
+		canbuild21=talsonar;
+		canbuild22=taltl;
+		canbuild23=TALMT;
+		canbuild24=TALFMT;
+		canbuild25=talsolar;
+		}
+		
+	[TALVP]
+		{
+		canbuild1=talcv;
+		canbuild2=talfav;
+		canbuild3=talltank;
+		canbuild4=talmtank;
+		canbuild5=talsam;
+		canbuild6=talmlayer;
+		canbuild7=talhtank;
+		canbuild8=talvspam;
+		}	
+	
+	[TALCV]
+		{
+		canbuild1=TALMEXP2;
+		canbuild2=TALSOLARP2;
+		canbuild3=TALMMKP2;
+		canbuild4=talwind;
+		canbuild5=TALSOLARP2;
+		canbuild6=talap;
+
+		canbuild7=talvp;
+		canbuild8=talhlab;
+		canbuild9=TALAVP;
+		canbuild10=talsy;
+		canbuild11=talrad;
+		canbuild12=talestor;
+		
+		canbuild13=talmstor;
+		canbuild14=taluwmex;
+		canbuild15=taltide;
+		canbuild16=taluwmmk;
+		canbuild17=taluwestor;
+		canbuild18=taluwmstor;
+		
+		canbuild19=talsonar;
+		canbuild20=taltl;
+		canbuild21=TALGEO;
+		canbuild22=talsolar;
+		canbuild23=TALMT;
+		canbuild24=talsgt;
+		canbuild25=TALHLT;
+		canbuild26=TALPLASMA;
+
+		}
+		
+//	[TALMLAYER]
+//		{
+//		canbuild1=tal3jammer;
+//		canbuild2=tal3mine1;
+//		canbuild3=tal3mine2;
+//		canbuild4=tal3mine3;
+//		canbuild5=tal3nuke;
+//		canbuild6=tal3trap;
+//		}
+//
+//	[TALCOMUPSH]
+//		{
+//		canbuild1=tal4drone;
+//		canbuild2=tal4gate;
+//		canbuild3=tal4mpak;
+//		canbuild4=tal4rad;
+//		canbuild5=tal4shield;
+//		}
+		
+	[TALHLAB]
+		{
+		canbuild1=talchover;
+		canbuild2=talfhover;
+		canbuild3=tallhover;
+		canbuild4=talmhover;
+		canbuild5=talaahover;
+		canbuild7=talhhover;
+		}
+
+	[TALCHOVER]
+		{
+		canbuild1=TALMEXP2;
+		canbuild2=TALSOLARP2;
+		canbuild3=TALMMKP2;
+		canbuild4=talwind;
+		canbuild5=TALSOLARP2;
+		canbuild6=talap;
+
+		canbuild7=talvp;
+		canbuild8=talhlab;
+		canbuild9=TALAHLAB;
+		canbuild10=talsy;
+		canbuild11=talrad;
+		canbuild12=talestor;
+		
+		canbuild13=talmstor;
+		canbuild14=taluwmex;
+		canbuild15=taltide;
+		canbuild16=taluwmmk;
+		canbuild17=taluwestor;
+		canbuild18=taluwmstor;
+		
+		canbuild19=talsonar;
+		canbuild20=taltl;
+		canbuild21=TALGEO;
+		canbuild22=talsolar;
+		canbuild23=TALMT;
+		canbuild24=talsgt;
+		canbuild25=TALHLT;
+		canbuild26=TALPLASMA;
+		}
+		
+	[TALAP]
+		{
+		canbuild1=talca;
+		canbuild2=talscoutp;
+		canbuild3=talfgt;
+		canbuild4=talbmb;
+		canbuild5=taltplane;
+		}
+
+	[TALCA]
+		{
+		canbuild1=TALMEXP2;
+		canbuild2=TALSOLARP2;
+		canbuild3=TALMMKP2;
+		canbuild4=talwind;
+		canbuild5=TALBAR;
+		canbuild6=talap;
+
+		canbuild7=talvp;
+		canbuild8=talhlab;
+		canbuild9=TALAAP;
+		canbuild10=talsy;
+		canbuild11=talrad;
+		canbuild12=talestor;
+		
+		canbuild13=talmstor;
+		canbuild14=taluwmex;
+		canbuild15=taltide;
+		canbuild16=taluwmmk;
+		canbuild17=taluwestor;
+		canbuild18=taluwmstor;
+		
+		canbuild19=talsonar;
+		canbuild20=taltl;
+		canbuild21=TALGEO;
+		canbuild22=talsolar;
+		canbuild23=TALMT;
+		canbuild24=talsgt;
+		canbuild25=TALHLT;
+		canbuild26=TALPLASMA;
+		}
+	[TALSY]
+		{
+		canbuild1=talcs;
+		canbuild2=tallship;
+		canbuild3=talmship;
+		canbuild4=TALSTEALTHS;
+		canbuild5=talroy;
+		canbuild6=talsub;
+		canbuild7=taltship;
+		}
+	[TALCS]
+		{
+		canbuild1=talasy;
+		canbuild2=talsy;
+		canbuild3=taltide;
+		canbuild4=talsonar;
+		canbuild5=taltl;
+		canbuild6=talsgt;
+
+		canbuild7=TALFMT;
+		canbuild8=taluwestor;
+		canbuild9=taluwmmk;
+		canbuild10=taluwmstor;
+		canbuild11=talfhlt;
+		canbuild12=taluwmex;
+		}
+	[TALSPC]
+		{
+		canbuild1=TALMEXP2;
+		canbuild2=TALSOLARP2;
+		canbuild3=TALMMKP2;
+		canbuild4=talwind;
+		canbuild5=TALBAR;
+		canbuild6=talap;
+
+		canbuild7=talvp;
+		canbuild8=talhlab;
+		canbuild9=TALAAP;
+		canbuild10=talsy;
+		canbuild11=talrad;
+		canbuild12=talestor;
+		
+		canbuild13=talmstor;
+		canbuild14=taluwmex;
+		canbuild15=taltide;
+		canbuild16=taluwmmk;
+		canbuild17=taluwestor;
+		canbuild18=taluwmstor;
+		
+		canbuild19=talsonar;
+		canbuild20=taltl;
+		canbuild21=TALGEO;
+		canbuild22=talsolar;
+		canbuild23=TALMT;
+		canbuild24=talsgt;
+		canbuild25=TALHLT;
+		canbuild26=TALPLASMA;
+
+		canbuild27=TALSSP;
+		canbuild28=TALSUBPEN;
+		canbuild29=TALFHLT;
+		}
+	[TALBAR]
+		{
+		canbuild1=talinf;
+		canbuild2=talsnipe;
+		canbuild3=talmerc;
+//		canbuild4=talpsyker;
+		}
+	[TALAHLAB]
+		{
+		canbuild1=talachover;
+		canbuild2=talckhover;
+		canbuild3=tallahover;
+		canbuild4=taljamhover;
+		canbuild5=talmishover;
+//		canbuild6=talashover;
+		}
+	[TALAAP]
+		{
+		canbuild1=talaca;
+		canbuild2=talabmb;
+		canbuild3=talintcpt;
+		canbuild4=talspyp;
+		canbuild5=talgunship;
+		canbuild6=taltrpbmb;
+		canbuild7=talmedic;
+		}
+	[TALAVP]
+		{
+		canbuild1=talacv;
+		canbuild2=talflamer;
+		canbuild3=talflakt;
+		canbuild4=talantin;
+		canbuild5=talmbt;
+		canbuild6=talmrl;
+
+		canbuild7=talamph;
+		canbuild8=talsubtank;
+		canbuild9=talrav;
+		canbuild10=talsphere;
+		canbuild11=taljam;
+		canbuild12=talgatebomb;
+		}
+	[TALASY]
+		{
+		canbuild1=talacs;
+		canbuild2=talcar;
+		canbuild3=talasub;
+		canbuild4=tallas;
+		canbuild5=talcrus;
+		canbuild6=taldread;
+		canbuild7=talews;
+		canbuild8=taltsub;
+		}
+
+	[TALSUBPEN]
+		{
+		canbuild1=talsub;
+		canbuild2=talasub;
+		canbuild3=talamph;
+		canbuild4=talsubtank;
+		canbuild5=taltsub;
+		canbuild6=talaca;
+		}
+	[TALSSP]
+		{
+		canbuild1=talspc;
+		canbuild2=talspsonar;
+		canbuild3=talspgs;
+		canbuild4=talspfgt;
+		canbuild5=talspbmb;
+		canbuild6=taltrpbmb;
+		}
+	[TALACS]
+		{
+		canbuild1=talsy;
+		canbuild2=TALASY;
+		canbuild3=TALSUBPEN;
+		canbuild4=talssp;
+		canbuild5=talmohomex;
+		canbuild6=talmohommk;
+		canbuild7=taluwfusion;
+		canbuild8=talir;
+		canbuild9=talatl;
+		canbuild10=TALADVSONAR;		
+		}
+	
+
+	[TALACV]
+		{
+		canbuild1=talvp;
+		canbuild2=TALAVP;
+		canbuild3=talgate;
+		canbuild4=TALBAR;
+		canbuild5=talmohomex;
+		canbuild6=talmohommk;
+
+		canbuild7=talfusion;
+		canbuild8=talcomrad;
+		canbuild9=talir;
+		canbuild10=TALFlaK;
+		canbuild11=talalt;
+		canbuild12=talsling;
+		
+		canbuild13=talan;
+		canbuild14=talvl;
+		canbuild15=talarp;
+		canbuild16=talpt;
+		canbuild17=talcomupsh;
+		canbuild18=talarad;
+		
+		canbuild19=TALMOFOFA;
+		}
+	[TALACA]
+		{
+		canbuild1=TALAP;
+		canbuild2=TALAAP;
+		canbuild3=TALSSP;
+		canbuild4=TALBAR;
+		canbuild5=talmohomex;
+		canbuild6=talmohommk;
+
+		canbuild7=talfusion;
+		canbuild8=talcomrad;
+		canbuild9=talir;
+		canbuild10=TALFlaK;
+		canbuild11=talalt;
+		canbuild12=talsling;
+		
+		canbuild13=talan;
+		canbuild14=talvl;
+		canbuild15=talarp;
+		canbuild16=talpt;
+		canbuild17=talcomupsh;
+		canbuild18=talarad;
+		
+		canbuild19=TALSLAB;
+		}
+		
+	[TALACHOVER]
+		{
+		canbuild1=TALHLAB;
+		canbuild2=TALAHLAB;
+		canbuild3=talgate;
+		canbuild4=TALBAR;
+		canbuild5=talmohomex;
+		canbuild6=talmohommk;
+
+		canbuild7=talfusion;
+		canbuild8=talcomrad;
+		canbuild9=talir;
+		canbuild10=TALFlaK;
+		canbuild11=talalt;
+		canbuild12=talsling;
+		
+		canbuild13=talan;
+		canbuild14=talvl;
+		canbuild15=talarp;
+		canbuild16=talpt;
+		canbuild17=talcomupsh;
+		canbuild18=talarad;
+		
+		canbuild19=TALHCRUSLAB;
+		}
+	[TALHCRUSLAB]
+		{
+		canbuild1=talhcrus;
+		canbuild2=talmbg;
+		canbuild3=talshhover;
+		}
+	[TALSLAB]
+		{
+		canbuild1=TALFCAR;
+		canbuild2=taldronefrigate;
+		canbuild3=TALSCIVES;
+		canbuild4=TALDROPS;
+		}
+	[TALMOFOFA]
+		{
+		canbuild1=talmofo;
+		canbuild2=talcat;
+		canbuild3=talmech;
+		canbuild4=TALAART;
+		}
+
+	[TALFCAR]
+		{
+		canbuild1=TALMSCONS;
+		canbuild2=TALAAP;
+		canbuild3=TALSLAB;
+		canbuild4=TALHCRUSLAB;
+		canbuild5=TALMOFOFA;
+		canbuild6=TALCFUSION;
+
+		canbuild7=TALREQUIEM;
+		canbuild8=TALION;
+		canbuild9=TALCOMRAD;
+		canbuild10=TALPAX;
+		}
+
+	[TALMSCONS]
+		{
+		canbuild1=talms;
+		}
+		
+       }
