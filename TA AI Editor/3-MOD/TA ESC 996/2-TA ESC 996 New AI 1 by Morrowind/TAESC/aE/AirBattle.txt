@@ -677,7 +677,7 @@ Weight ARMGEO_UPGRADE 10
 // Weight ARMGUARD 3
 Weight ARMGUARD 2.5
 // Weight ARMGUARD 3.5  // Lowered in case 1st factory happens to be VP, we don't want multiples of this structure too early
-Weight ARMGUARD_UPGRADE 1
+Weight ARMGUARD_UPG 1
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -714,7 +714,7 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script FireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 0.5
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script FireDelay, 10 sec. if charged
-Weight ARMBRTHA_UPGRADE 0.1
+Weight ARMBRTHA_UPG 0.1
 Weight ARMEMP 1
 // Weight ARMFIELD 2
 Weight ARMFIELD 0.5
@@ -1129,7 +1129,7 @@ Limit ARMGEO_UPGRADE 99
 //
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMGUARD 3
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMHLT 2
 Limit ARMHLT_UPGRADE 99
@@ -1175,7 +1175,7 @@ Limit ARMARL 5
 // Limit ARMBRTHA 15
 // Limit ARMBRTHA 3  // TEMPORARILY ZEROED FOR PLAY TESTING
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 Limit ARMEMP 2
 Limit ARMFIELD 5
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile
@@ -2562,7 +2562,7 @@ Weight ARMGEO_UPGRADE 10
 // Weight ARMGUARD 3
 Weight ARMGUARD 2.5
 // Weight ARMGUARD 3.5  // Lowered in case 1st factory happens to be VP, we don't want multiples of this structure too early
-Weight ARMGUARD_UPGRADE 1
+Weight ARMGUARD_UPG 1
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -2599,7 +2599,7 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script FireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 0.5
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script FireDelay, 10 sec. if charged
-Weight ARMBRTHA_UPGRADE 0.1
+Weight ARMBRTHA_UPG 0.1
 Weight ARMEMP 1
 // Weight ARMFIELD 2
 Weight ARMFIELD 0.5
@@ -3015,7 +3015,7 @@ Limit ARMGEO_UPGRADE 99
 //
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMGUARD 3
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMHLT 2
 Limit ARMHLT_UPGRADE 99
@@ -3061,7 +3061,7 @@ Limit ARMARL 5
 // Limit ARMBRTHA 15
 // Limit ARMBRTHA 3  // TEMPORARILY ZEROED FOR PLAY TESTING
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 Limit ARMEMP 2
 Limit ARMFIELD 5
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile
@@ -4445,7 +4445,7 @@ Weight ARMGEO_UPGRADE 10
 // Weight ARMGUARD 3
 Weight ARMGUARD 2.5
 // Weight ARMGUARD 3.5  // Lowered in case 1st factory happens to be VP, we don't want multiples of this structure too early
-Weight ARMGUARD_UPGRADE 1
+Weight ARMGUARD_UPG 1
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -4482,7 +4482,7 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script FireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 0.5
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script FireDelay, 10 sec. if charged
-Weight ARMBRTHA_UPGRADE 0.1
+Weight ARMBRTHA_UPG 0.1
 Weight ARMEMP 1
 // Weight ARMFIELD 2
 Weight ARMFIELD 0.5
@@ -4897,7 +4897,7 @@ Limit ARMGEO_UPGRADE 99
 //
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMGUARD 3
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 // AI unable to build _UPGRADE in v9.1.0_TEST_29+
 Limit ARMHLT 2
 Limit ARMHLT_UPGRADE 99
@@ -4943,7 +4943,7 @@ Limit ARMARL 5
 // Limit ARMBRTHA 15
 // Limit ARMBRTHA 3  // TEMPORARILY ZEROED FOR PLAY TESTING
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 Limit ARMEMP 2
 Limit ARMFIELD 5
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile

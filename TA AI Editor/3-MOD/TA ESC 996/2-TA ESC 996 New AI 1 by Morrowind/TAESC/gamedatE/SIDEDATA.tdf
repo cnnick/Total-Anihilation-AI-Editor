@@ -1843,8 +1843,8 @@
 		}
 	[ARMGUARD]
 		{
-		canbuild1=ARMGUARD_UPGRADE;
-		canbuild2=ARMGUARD_UPGRADE;
+		canbuild1=ARMGUARD_UPG;
+		canbuild2=ARMGUARD_UPG;
 		}
 	[ARMGEO]
 		{
@@ -1856,8 +1856,8 @@
 		}
 	[ARMBRTHA]
 		{
-		canbuild1=ARMBRTHA_UPGRADE;
-		canbuild2=ARMBRTHA_UPGRADE;
+		canbuild1=ARMBRTHA_UPG;
+		canbuild2=ARMBRTHA_UPG;
 		}
 	[ARMSHGEN]
 		{

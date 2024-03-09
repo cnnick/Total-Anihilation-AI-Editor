@@ -2217,8 +2217,8 @@ Weight ARMGEO_UPGRADE 10
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 // Weight ARMGUARD 3 > 3.5
 Weight ARMGUARD 2.4
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -2287,8 +2287,8 @@ Weight ARMARL 7
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 // Flakker v9.1.1 (FLAK/HFLAK ARMAAS/WING/YORK CORARCH/SENT/SKYNET) reloadtime=0.3  vs  v9.0.0 reloadtime=0.25
@@ -2413,7 +2413,7 @@ Limit ARMGUARD 10  // v9.0; boosted because AMB retired in v9.1.1; reverted beca
 // Limit ARMGUARD 20  // v9.6 _UPGRADE requires unit customization
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 10  // v9.0; boosted because ORION retired in v9.1.1; reverted because ORION revived in v9.8.5
 // Limit ARMHLT 20  // v9.6 _UPGRADE requires unit customization
@@ -2460,7 +2460,7 @@ Limit ARMARL 10
 // Limit ARMBRTHA 2  // v9.6/9.7 embedded profile value has disparity Limit BRTHA 2 vs INT 0
 Limit ARMBRTHA 3
 // v9.6 _UPGRADE requires unit customization
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile
@@ -3121,8 +3121,8 @@ Weight ARMGEO_UPGRADE 10
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 // Weight ARMGUARD 3 > 3.5
 Weight ARMGUARD 2.4
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -3191,8 +3191,8 @@ Weight ARMARL 7
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 // Flakker v9.1.1 (FLAK/HFLAK ARMAAS/WING/YORK CORARCH/SENT/SKYNET) reloadtime=0.3  vs  v9.0.0 reloadtime=0.25
@@ -3317,7 +3317,7 @@ Limit ARMGUARD 10  // v9.0; boosted because AMB retired in v9.1.1; reverted beca
 // Limit ARMGUARD 20  // v9.6 _UPGRADE requires unit customization
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 10  // v9.0; boosted because ORION retired in v9.1.1; reverted because ORION revived in v9.8.5
 // Limit ARMHLT 20  // v9.6 _UPGRADE requires unit customization
@@ -3364,7 +3364,7 @@ Limit ARMARL 10
 // Limit ARMBRTHA 2  // v9.6/9.7 embedded profile value has disparity Limit BRTHA 2 vs INT 0
 Limit ARMBRTHA 3
 // v9.6 _UPGRADE requires unit customization
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile
@@ -4025,8 +4025,8 @@ Weight ARMGEO_UPGRADE 10
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 // Weight ARMGUARD 3 > 3.5
 Weight ARMGUARD 2.4
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -4095,8 +4095,8 @@ Weight ARMARL 7
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 // Flakker v9.1.1 (FLAK/HFLAK ARMAAS/WING/YORK CORARCH/SENT/SKYNET) reloadtime=0.3  vs  v9.0.0 reloadtime=0.25
@@ -4221,7 +4221,7 @@ Limit ARMGUARD 10  // v9.0; boosted because AMB retired in v9.1.1; reverted beca
 // Limit ARMGUARD 20  // v9.6 _UPGRADE requires unit customization
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 10  // v9.0; boosted because ORION retired in v9.1.1; reverted because ORION revived in v9.8.5
 // Limit ARMHLT 20  // v9.6 _UPGRADE requires unit customization
@@ -4268,7 +4268,7 @@ Limit ARMARL 10
 // Limit ARMBRTHA 2  // v9.6/9.7 embedded profile value has disparity Limit BRTHA 2 vs INT 0
 Limit ARMBRTHA 3
 // v9.6 _UPGRADE requires unit customization
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 // Without revised YardMap to help spread placement, FLAK sooner becomes less worthwhile

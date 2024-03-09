@@ -2141,8 +2141,8 @@ Weight ARMGEO_UPGRADE 10
 // Tried lower weight to lessen early multiples of this higher BuildTime structure
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 Weight ARMGUARD 1.6
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -2196,8 +2196,8 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 Weight ARMFIELD 0.5
@@ -2316,7 +2316,7 @@ Limit ARMGEO_UPGRADE 99
 Limit ARMGUARD 10
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 20
 Limit ARMHLT_UPGRADE 99
@@ -2361,7 +2361,7 @@ Limit ARMARL 10
 //
 // v9.6 _UPGRADE requires unit customization
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 Limit ARMFIELD 10
@@ -2902,8 +2902,8 @@ Weight ARMGEO_UPGRADE 10
 // Tried lower weight to lessen early multiples of this higher BuildTime structure
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 Weight ARMGUARD 1.6
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -2957,8 +2957,8 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 Weight ARMFIELD 0.5
@@ -3077,7 +3077,7 @@ Limit ARMGEO_UPGRADE 99
 Limit ARMGUARD 10
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 20
 Limit ARMHLT_UPGRADE 99
@@ -3122,7 +3122,7 @@ Limit ARMARL 10
 //
 // v9.6 _UPGRADE requires unit customization
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 Limit ARMFIELD 10
@@ -3661,8 +3661,8 @@ Weight ARMGEO_UPGRADE 10
 // Tried lower weight to lessen early multiples of this higher BuildTime structure
 // GUARD/PUN weight may differ between factions to account for tendencies observed during play tests
 Weight ARMGUARD 1.6
-// Weight ARMGUARD_UPGRADE 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMGUARD_UPGRADE 0.05
+// Weight ARMGUARD_UPG 1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMGUARD_UPG 0.05
 //
 // Sentinel v9.1.0_TEST_33x notable changes:
 //   reloadtime=0.375  default=270  range=600   vs   v9.0.0 Sentinel reloadtime=0.2  default=288  range=600
@@ -3716,8 +3716,8 @@ Weight ARMARL 5
 // v9.1.0_TEST_33x data: default=2700 (15 sec. script fireDelay, 10 sec. if charged)   vs   v9.0.0 Big Bertha default=2250
 Weight ARMBRTHA 2
 // Big Bertha_upgrade v9.1.0_TEST_33x data: 8-shot scripted salvo, 15 sec. script fireDelay, 10 sec. if charged
-// Weight ARMBRTHA_UPGRADE 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
-Weight ARMBRTHA_UPGRADE 0.05
+// Weight ARMBRTHA_UPG 0.1  // delicate Weight _UPGRADE pacing; v9.6 _UPGRADE requires optional unit customization
+Weight ARMBRTHA_UPG 0.05
 //
 Weight ARMEMP 1
 Weight ARMFIELD 0.5
@@ -3836,7 +3836,7 @@ Limit ARMGEO_UPGRADE 99
 Limit ARMGUARD 10
 // Limit _UPGRADE seems to set number of times _UPGRADE event is allowed to trigger where each triggering event
 // upgrades all instances of this specific unit already completely built at moment of trigger
-Limit ARMGUARD_UPGRADE 99
+Limit ARMGUARD_UPG 99
 //
 Limit ARMHLT 20
 Limit ARMHLT_UPGRADE 99
@@ -3881,7 +3881,7 @@ Limit ARMARL 10
 //
 // v9.6 _UPGRADE requires unit customization
 Limit ARMBRTHA 3
-Limit ARMBRTHA_UPGRADE 99
+Limit ARMBRTHA_UPG 99
 //
 Limit ARMEMP 2
 Limit ARMFIELD 10
