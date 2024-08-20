@@ -1,0 +1,16 @@
+
+found there a bug in ESC 998 that AI will not build any CORE T1 Vehicle Plant without a global sets of Limit and Weight.
+
+This means that if you set Limit and Weight of Plan(easy, medium, hard) as usual, AI will not build any CORE T1 Vehicle Plant.
+
+To make sure the AI build CORE T1 Vehicle Plant, you need to add the global sets of Limit and Weight manually before "PLAN EASY" in AI text.  
+
+	For a Example：
+
+		Limit CORVP 3
+
+		Weight CORVP 0.6
+
+		Plan easy
+
+If you find any other units have same problem while test the AI, please try to solve it in the same way.
