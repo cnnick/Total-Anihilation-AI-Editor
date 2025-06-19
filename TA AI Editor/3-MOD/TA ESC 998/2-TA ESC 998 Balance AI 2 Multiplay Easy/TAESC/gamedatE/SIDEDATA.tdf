@@ -1,0 +1,3199 @@
+// Copyright 1997, Humongous Entertainment Inc.
+
+//  ==========================================================================================================================
+//
+//  AI Skew Balanced (slightly favors land to lessen stranding land factories on islands)
+//
+//  Release date/customized version: October 1, 2022
+//
+//             It is not quite a fully completed version because Escalation v9.9.0 exhibits inability to build:
+//               Core Avenger (Fighter) T1 CORVENG
+//               Core Wind Generator T1 CORWIN
+//               Core Diplomat (Mobile Rocket Launcher) T2 CORVROC
+//               Core Vindicator (Armored Assault Command VTOL) T3 CORVIND
+//               Core Viper (Pop-up Heavy Laser, Radar Jammed) T2 CORVIPE (less severe build issue than units listed above)
+//             Probable cause being unitID count (is 554 in v9.9.0) excessively exceeding Total Annihilation's Skirmish
+//             capability impacting AI unit data space.
+//
+//             Escalation v9.8.5 through v9.9.0 unit additions of:
+//               Tosser/Vandal (High Trajectory Light Artillery Vehicle) T1 ARMLART/CORLART
+//               Custodian/Patron (Ultra Construction Assist Vehicle/Kbot) T3 ARMUCV
+//               Tsar (Radiation Projection Vehicle) T3 CORTSAR (UnitName was CORION in v9.8.6)
+//               Liberator/Despot (Dreadnought Assault Hovercraft) T4 ARMHFLAG/CORHFLAG
+//               Panopticon (Panoptic Intel Array) / Shaper (Peripheral Consciousness Intel Center) T4 ARMZIG/CORZIG
+//               Experimental Construction Hovercraft T4 CORUCH
+//               Abyssal/Vortex (Strategic Command Submarine) T4 ARMUSUB/CORUSUB
+//               Gargant (Exp. Omni Kbot) T4 ARMWALK
+//               Olympus (Mobile Super Nuclear Cannon) T4 ARMOLYMPUS
+//               B.F.G. (Experimental Mass Antimatter Cannon) T4 CORBFG
+//
+//             ARMORION/AMB, CORVIPE/TOAST returned from retirement and revived as T2 in Escalation v9.8.5
+//             ARMVULC, CORBUZZ returned from retirement and  revived as T3 in Escalation v9.8.5
+//             Mine layers/transports/etc. canbuilds have been adjusted to avoid some factory output skew
+//
+//
+//  Designed and play tested to be compatible with Escalation v9.9.0.  It is tuned for noncheating AI.  Many CHEAT and
+//  UWCHEAT canbuild elements are no longer build options for any construction units.
+//
+//  This version of SIDEDATA is near evenly balanced when building units for land, sea and air.  It does not significantly
+//  lean towards favoring particular terrain.  However, the balanced approach allows Commander to stroll longer distances to
+//  build MEX and/or UWMEX on maps having both land and water.  These longer walks can seriously impact expansion efficiency
+//  during the important "Commander solo" early game stage especially if Commander ping-pongs back and forth from building on
+//  land then water then back to land.  If you prefer Commander not ping-pong back and forth between land and water then
+//  "AI skew favors land" or "AI skew favors water" is recommended.
+//
+//  Having been designed for land, water and hybrid land/water maps, this SIDEDATA aims to lessen stranding of Kbots
+//  and vehicles on isolated islands.  This is handled by some tier 3+ (air, sea, hovercraft) construction units avoid
+//  building Kbot and vehicle plants--significantly lessening chance of them sprouting on islands.
+//
+//  As of April 25, 2020, Skew Balanced helps extend tier 1 game play by delaying arrival of tier 2 factories.  During
+//  play tests of 1 vs 1 on map "[Dx] Yang" with AI profile DEFAULT v1.3.9 under Hard setting noncheating game conditions,
+//  tier 2 factories began appearing within Game Time 35:00 to 50:00 range.
+//
+//
+//  Additional tidbits:
+//
+//  - text editors with "Find" function having regular expression (Regex) capability enabled can catch some common syntax
+//    typos of keyword "canbuild" undetectable by Armoured Fish's CheckTdf v1.0 for example:
+//
+//		(?<![A-z=])([A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])				<-- catches _______[0-9]
+//		(?<![A-z=])([A-z][A-z][A-z][A-z][A-z][A-z][A-z][A-ce-z][0-9])		<-- catches _______d[0-9]
+//		(?<![A-z=])([A-bd-z][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])		<-- catches c_______[0-9]
+//		(?<![A-z=])([A-z][A-z][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])		<-- catches canbuild_[0-9] & _canbuild[0-9]
+//
+//		The following are, collectively, a nearly complete set of "canbuild" typo test strings:
+//		canbuil3
+//		anbuilz3
+//		anbuild3
+//		canbuilz3
+//		zanbuilz3
+//		zanbuild3
+//		canbuildz3
+//		zanbuildz3
+//		zcanbuild3
+//
+//		Successful search strings that were formerly used:
+//
+//		[^=]c[A-z][A-z][A-z][A-z][A-z][A-z][0-9]	the [^=] bypasses CORMINE being returned during search
+//		c[A-z][A-z][A-z][A-z][A-z][A-z][0-9]		same as above line but requires "Case sensitive" enabled to skip CORMINE
+//		canbuil[0-9]			this typo is also detected by first search string [^=]c[A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//
+//		The following search strings were unsuccessful and are listed for historical reference:
+//
+//			[^abcdefghijklmnopqrstuvwxyz= \[][A-z][A-z][A-z][A-z][A-z][A-z][0-9]  requires backwards search from end of file
+//			[^\][A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//			[^\[][A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//			[^abcdefghijklmnopqrstuvwxyz= \[][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//			[^abcdefghijklmnopqrstuvwxyz= ][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//			[A-z][A-z][A-z][A-z][A-z][A-z][^d][0-9]=					requires "Case sensitive" enabled to skip CORMINE
+//			[A-z][A-z][A-z][A-z][A-z][A-z][^d0123456789][0-9]=			requires "Case sensitive" enabled to skip CORMINE
+//			[^=][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9]
+//			(?<!=)([A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])
+//			(?<![A-z=])([A-BD-TV-Za-bd-tv-z][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])
+//			(?<![A-z=])([ABD-Zabd-z][A-z][A-z][A-z][A-z][A-z][A-z][A-z][0-9])
+//
+//  ==========================================================================================================================
+
+// Each side has a set of data for the on screen information that can be changed easily in this
+// text file and immediately reflected in the game without compilation
+
+[SIDE0]
+	{
+	name=ARM;
+	nameprefix=ARM;
+	commander=ARMCOM;
+	intgaf=ARMINT;
+
+	font=console;
+	fontgui=armbutt;
+	energycolor=208;
+	metalcolor=224;
+
+	[LOGO]
+		{ x1=132; y1=5; x2=152; y2=25; }
+
+	[ENERGYBAR]
+		{ x1=471; y1=11; x2=592; y2=13; }
+
+	[ENERGYNUM]
+		{ x1=529; y1=18; x2=529; y2=18; }
+
+	[ENERGYMAX]
+		{ x1=595; y1=1; x2=595; y2=1; }
+
+	[ENERGY0]
+		{ x1=468; y1=1; x2=468; y2=1; }
+
+	[METALBAR]
+		{ x1=218; y1=11; x2=339; y2=13; }
+
+	[METALNUM]
+		{ x1=278; y1=18; x2=278; y2=18; }
+
+	[METALMAX]
+		{ x1=341; y1=1; x2=341; y2=1; }
+
+	[METAL0]
+		{ x1=215; y1=1; x2=215; y2=1; }
+
+	[TOTALUNITS]
+		{ x1=560; y1=7; x2=583; y2=15; }
+
+	[TOTALTIME]
+		{ x1=605; y1=7; x2=628; y2=15; }
+
+	[ENERGYPRODUCED]
+		{ x1=609; y1=5; x2=609; y2=5; }
+
+	[ENERGYCONSUMED]
+		{ x1=609; y1=17; x2=609; y2=17; }
+
+	[METALPRODUCED]
+		{ x1=358; y1=5; x2=358; y2=5; }
+
+	[METALCONSUMED]
+		{ x1=358; y1=17; x2=358; y2=17; }
+
+	// All of these regions describe areas on the screen footer
+
+	[LOGO2]
+		{ x1=132; y1=455; x2=152; y2=475; }
+
+	[UNITNAME]
+		{ x1=245; y1=452; x2=245; y2=460; }
+
+	[DAMAGEBAR]
+		{ x1=200; y1=463; x2=290; y2=465; }
+
+	[UNITMETALMAKE]
+		{ x1=350; y1=458; x2=170; y2=478; }
+
+	[UNITMETALUSE]
+		{ x1=350; y1=468; x2=170; y2=478; }
+
+	[UNITENERGYMAKE]
+		{ x1=400; y1=458; x2=170; y2=468; }
+
+	[UNITENERGYUSE]
+		{ x1=400; y1=468; x2=170; y2=468; }
+
+	[MISSIONTEXT]
+		{ x1=385; y1=449; x2=400; y2=450; }
+
+	[UNITNAME2]
+		{ x1=555; y1=452; x2=555; y2=460; }
+
+	[DAMAGEBAR2]
+		{ x1=510; y1=463; x2=600; y2=465; }
+
+	[NAME]
+		{ x1=132; y1=452; x2=142; y2=460; }
+
+	[DESCRIPTION]
+		{ x1=132; y1=465; x2=142; y2=472; }
+
+	[RELOAD1]
+		{ x1=132; y1=450; x2=148; y2=458; }
+
+	[RELOAD2]
+		{ x1=132; y1=460; x2=148; y2=468; }
+
+	[RELOAD3]
+		{ x1=132; y1=470; x2=148; y2=478; }
+	}
+
+
+[SIDE1]
+	{
+	name=CORE;
+	nameprefix=COR;
+	commander=CORCOM;
+	intgaf=NEWINT;
+
+	font=console;
+	fontgui=armbutt;
+	energycolor=208;
+	metalcolor=224;
+
+	[LOGO]
+		{ x1=132; y1=5; x2=152; y2=25; }
+
+	[ENERGYBAR]
+		{ x1=471; y1=11; x2=592; y2=13; }
+
+	[ENERGYNUM]
+		{ x1=529; y1=18; x2=529; y2=18; }
+
+	[ENERGYMAX]
+		{ x1=595; y1=1; x2=595; y2=1; }
+
+	[ENERGY0]
+		{ x1=468; y1=1; x2=468; y2=1; }
+
+	[METALBAR]
+		{ x1=218; y1=11; x2=339; y2=13; }
+
+	[METALNUM]
+		{ x1=278; y1=18; x2=278; y2=18; }
+
+	[METALMAX]
+		{ x1=341; y1=1; x2=341; y2=1; }
+
+	[METAL0]
+		{ x1=215; y1=1; x2=215; y2=1; }
+
+	[TOTALUNITS]
+		{ x1=560; y1=7; x2=583; y2=15; }
+
+	[TOTALTIME]
+		{ x1=605; y1=7; x2=628; y2=15; }
+
+	[ENERGYPRODUCED]
+		{ x1=609; y1=5; x2=609; y2=5; }
+
+	[ENERGYCONSUMED]
+		{ x1=609; y1=17; x2=609; y2=17; }
+
+	[METALPRODUCED]
+		{ x1=358; y1=5; x2=358; y2=5; }
+
+	[METALCONSUMED]
+		{ x1=358; y1=17; x2=358; y2=17; }
+
+	// All of these regions describe areas on the screen footer
+
+	[LOGO2]
+		{ x1=132; y1=455; x2=152; y2=475; }
+
+	[UNITNAME]
+		{ x1=245; y1=452; x2=245; y2=460; }
+
+	[DAMAGEBAR]
+		{ x1=200; y1=463; x2=290; y2=465; }
+
+	[UNITMETALMAKE]
+		{ x1=350; y1=458; x2=170; y2=478; }
+
+	[UNITMETALUSE]
+		{ x1=350; y1=468; x2=170; y2=478; }
+
+	[UNITENERGYMAKE]
+		{ x1=400; y1=458; x2=170; y2=468; }
+
+	[UNITENERGYUSE]
+		{ x1=400; y1=468; x2=170; y2=468; }
+
+	[MISSIONTEXT]
+		{ x1=385; y1=449; x2=400; y2=450; }
+
+	[UNITNAME2]
+		{ x1=555; y1=452; x2=555; y2=460; }
+
+	[DAMAGEBAR2]
+		{ x1=510; y1=463; x2=600; y2=465; }
+
+	[NAME]
+		{ x1=132; y1=452; x2=142; y2=460; }
+
+	[DESCRIPTION]
+		{ x1=132; y1=465; x2=142; y2=472; }
+
+	[RELOAD1]
+		{ x1=132; y1=450; x2=148; y2=458; }
+
+	[RELOAD2]
+		{ x1=132; y1=460; x2=148; y2=468; }
+
+	[RELOAD3]
+		{ x1=132; y1=470; x2=148; y2=478; }
+	}
+
+[CANBUILD]
+	{
+
+	[ARMCOM]
+		{
+		canbuild1=ARMCHEAT;
+		canbuild2=ARMMEX;
+		canbuild3=ARMUWCHEAT;
+		canbuild4=ARMRL;
+		canbuild5=ARMTIDE;
+		canbuild6=ARMFLLT;
+
+		canbuild7=ARMLAB;
+		canbuild8=ARMVP;
+		canbuild9=ARMAP;
+		canbuild10=ARMSY;
+		canbuild11=ARMHP;
+		canbuild12=ARMFHP;
+
+		canbuild13=ARMSOLAR;	
+		canbuild14=ARMLLT;
+		canbuild15=ARMSOLAR;
+		canbuild16=ARMSOLAR;
+		canbuild17=ARMSOLAR;
+		canbuild18=ARMMEX;
+		canbuild19=ARMMEX;
+		canbuild20=ARMUWMEX;
+		}
+
+	[ARMLAB]
+		{
+		canbuild1=ARMCK;
+		canbuild2=ARMPW;
+		canbuild3=ARMROCK;
+		canbuild4=ARMHAM;
+		canbuild5=ARMJETH;
+		canbuild6=ARMWAR;
+
+		canbuild7=ARMFLEA;
+//			canbuild8=ARMMARK;		// Replaced Invader - AI should not build Crawling Bombs
+
+		canbuild8=ARMCK;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCK;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCK;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMWAR;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMVP]
+		{
+		canbuild1=ARMCV;
+		canbuild2=ARMFAV;
+		canbuild3=ARMFLASH;
+		canbuild4=ARMSTUMP;
+		canbuild5=ARMSAM;
+//			canbuild6=ARMSEER;		// Replaced Mine Layer - AI should not build Mine Layers
+
+		canbuild6=ARMJAV;
+		canbuild7=ARMLART;		// Added v9.9.0 Tosser (High Trajectory Light Artillery Vehicle)
+
+		canbuild8=ARMCV;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCV;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCV;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMSTUMP;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMAP]
+		{
+		canbuild1=ARMCA;
+		canbuild2=ARMPEEP;
+		canbuild3=ARMFIG;
+		canbuild4=ARMTHUND;
+		canbuild5=ARMDPL;		// Added v9.1.0_TEST_29 Zephyr (Depthcharge Bomber)
+//			canbuild6=ARMFIG;		// Replaced Mine Layer - AI should not build Mine Layers
+//			canbuild7=ARMCA;		// Replaced Transport - AI should not build Transports
+
+		canbuild6=ARMCA;		// Added intentional duplicate to boost chance of building
+		canbuild7=ARMCA;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMCA;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCA;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCA;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMSY]
+		{
+		canbuild1=ARMCS;
+		canbuild2=ARMPT;
+		canbuild3=ARMSUB;
+		canbuild4=ARMFRIG;
+//			canbuild5=ARMAABOAT;	// ARMTSHIP;	// Replaced Transport - AI should not build Transports
+		canbuild5=ARMROY;
+		canbuild6=ARMAABOAT;	// Added v9.1.0_TEST_29 Mariner (AA Corvette)
+//			canbuild7=ARMROY;		// ARMMLS;		// Replaced Mine Layer - AI should not build Mine Layers
+
+		canbuild7=ARMCS;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMCS;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCS;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCS;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMCS;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMHP]
+		{
+		canbuild1=ARMCH;
+		canbuild2=ARMSH;
+		canbuild3=ARMANAC;
+		canbuild4=ARMAH;
+		canbuild5=ARMMH;
+//			canbuild6=ARMLH;		// Replaced Transport - AI should not build Transports
+		canbuild6=ARMLH;
+		canbuild7=ARMNH;		// Added v9.1.0_TEST_29 Wisp (Scavenger Hovercraft, Stealth)
+
+		canbuild8=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMANAC;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMFHP]
+		{
+		canbuild1=ARMCH;
+		canbuild2=ARMSH;
+		canbuild3=ARMANAC;
+		canbuild4=ARMAH;
+		canbuild5=ARMMH;
+//			canbuild6=ARMLH;		// Replaced Transport - AI should not build Transports
+		canbuild6=ARMLH;
+		canbuild7=ARMNH;		// Added v9.1.0_TEST_29 Wisp (Scavenger Hovercraft, Stealth)
+
+		canbuild8=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMCH;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMANAC;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMPLAT]
+		{
+		canbuild1=ARMCSA;
+		canbuild2=ARMPEEP;
+		canbuild3=ARMFIG;
+		canbuild4=ARMTHUND;
+		canbuild5=ARMDPL;		// Added v9.1.0_TEST_29 Zephyr (Depthcharge Bomber)
+
+//			canbuild6=ARMFIG;		// Replaced Transport - AI should not build Transports
+
+		canbuild6=ARMCSA;		// Added intentional duplicate to boost chance of building
+		canbuild7=ARMCSA;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMCSA;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCSA;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCSA;		// Added intentional duplicate to boost chance of building
+		}
+
+
+	[ARMCK]
+		{
+		canbuild1=ARMSOLAR;
+		canbuild2=ARMMEX;
+		canbuild3=ARMCHEAT;
+		canbuild4=ARMCHEAT;
+		canbuild5=ARMHP;
+		canbuild6=ARMMAKR;
+		canbuild7=ARMWIN;
+
+		canbuild8=ARMLAB;
+		canbuild9=ARMVP;
+		canbuild10=ARMAP;			// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild11=ARMSY;
+		canbuild12=ARMHP;
+		canbuild13=ARMALAB;		// Intentional later canbuild to affect arrival; _UPGRADE revived v9.3 after retired in v9.1.1
+		canbuild14=ARMALAB;		// Intentional later canbuild to affect arrival
+		
+		canbuild15=ARMRAD;		// Intentional later canbuild for lower priority
+		}
+	[ARMCV]
+		{
+
+		canbuild1=ARMSOLAR;
+		canbuild2=ARMMEX;
+		canbuild3=ARMRL;
+		canbuild4=ARMCHEAT;
+		canbuild5=ARMHP;
+		canbuild6=ARMMAKR;
+		canbuild7=ARMWIN;
+
+		canbuild8=ARMLAB;
+		canbuild9=ARMVP;
+		canbuild10=ARMAP;			// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild11=ARMSY;
+		canbuild12=ARMHP;
+		canbuild13=ARMASP;		// Intentional later canbuild to affect arrival; _UPGRADE revived v9.3 after retired in v9.1.1
+		canbuild14=ARMAVP;		// Intentional later canbuild to affect arrival
+		
+		canbuild15=ARMRAD;		// Intentional later canbuild for lower priority
+
+		}
+
+
+	[ARMCH]
+		{
+		canbuild1=ARMSOLAR;
+		canbuild2=ARMMEX;
+		canbuild3=ARMLLT;
+		canbuild4=ARMRL;
+		canbuild5=ARMESTOR;
+		canbuild6=ARMMSTOR;
+		canbuild7=ARMHLT;
+
+		canbuild8=ARMCHEAT;		// ARMCHEAT;	// Swap unneeded cheat unit with intentional duplicate; skew is balanced
+		canbuild9=ARMUWCHEAT;		// ARMUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate; skew is balanced
+
+		canbuild10=ARMTIDE;		// ARMARL;		// Displace unit moved to T2 in v9.0.0
+		canbuild11=ARMUWMEX;
+		canbuild12=ARMFLLT;
+		canbuild13=ARMFRT;
+		canbuild14=ARMTL;
+		canbuild15=ARMFHLT;
+
+		canbuild16=ARMUWES;		// ARMUWMFUS;	// Displace unit moved to T2 in v9.3
+		canbuild17=ARMUWMS;		// ARMGEN;		// Displace unit moved to T2 in v9.3
+
+		canbuild18=ARMLAB;
+		canbuild19=ARMVP;
+		canbuild20=ARMAP;
+		canbuild21=ARMSY;
+		canbuild22=ARMHP;
+		canbuild23=ARMFHP;
+		canbuild24=ARMPLAT;		// v9.0.0 unit addition
+
+		canbuild25=ARMASP;		// Intentional later canbuild to affect arrival; _UPGRADE retired v9.3 after retired in v9.1.1
+		canbuild26=ARMGEO;		// Intentional later canbuild to affect arrival; earliest seen Game Time 6:30
+		canbuild27=ARMGUARD;	// Intentional later canbuild to affect arrival
+
+		canbuild28=ARMFAHP;		// Intentional later canbuild to affect arrival
+		canbuild29=ARMAHP;		// Intentional later canbuild to affect arrival
+
+		canbuild30=ARMFGUARD;	// Intentional later canbuild to affect arrival
+
+		canbuild31=ARMFWIN;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild32=ARMFMKR;		// Intentional later canbuild for lower priority
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out lower priority canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/*			canbuild33=ARMWIN;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild34=ARMRAD;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild35=ARMDRAG;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild36=ARMSONAR;	// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild37=ARMMAKR;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild38=ARMFRAD;		// Added new unit in v9.4; intentional later canbuild for lower priority
+			canbuild39=ARMFDRAG;	// Intentionally beyond maximum canbuild32 limit because lower priority
+
+			canbuild40=ARMORION;	// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+			canbuild41=ARMAMB;		// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+*/
+		}
+	[ARMCA]
+		{
+		canbuild1=ARMSOLAR;
+		canbuild2=ARMMEX;
+		canbuild3=ARMRL;
+		canbuild4=ARMLLT;
+		canbuild5=ARMESTOR;
+		canbuild6=ARMMSTOR;
+		canbuild7=ARMHLT;
+		canbuild8=ARMTL;
+
+		canbuild9=ARMASP;		// Arrival of aircraft increases need for this; _UPGRADE retired v9.3 after retired in v9.1.1
+
+		canbuild10=ARMCHEAT;		// ARMCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=ARMSY;		// ARMARL;		// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild12=ARMHP;		// ARMDRAG;		// Swap unusable unit with intentional duplicate
+
+		canbuild13=ARMSOLAR;	// ARMGEN;		// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild14=ARMMEX;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=ARMRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=ARMLLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild18=ARMHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild19=ARMMSTOR;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild20=ARMRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild21=ARMMAKR;
+		canbuild22=ARMRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild23=ARMLAB;
+		canbuild24=ARMVP;
+		canbuild25=ARMAP;
+		canbuild26=ARMSY;
+		canbuild27=ARMHP;
+
+		canbuild28=ARMGEO;		// Intentional later canbuild to affect arrival; earliest seen Game Time 6:30
+
+		canbuild29=ARMAAP;		// Intentional later canbuild to affect arrival
+
+		canbuild30=ARMGUARD;	// Intentional later canbuild to affect arrival
+
+		canbuild31=ARMWIN;		// Intentional later canbuild for lower priority
+		canbuild32=ARMRAD;		// Intentional later canbuild for lower priority
+
+//			canbuild33=ARMORION;	// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+//			canbuild34=ARMAMB;		// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+		}
+	[ARMCS]
+		{
+		canbuild1=ARMTIDE;
+		canbuild2=ARMUWMEX;
+		canbuild3=ARMFLLT;
+		canbuild4=ARMFRT;
+		canbuild5=ARMTL;
+		canbuild6=ARMFRT;		// ARMUWMFUS;	// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild7=ARMUWES;
+		canbuild8=ARMUWMS;
+		canbuild9=ARMFHLT;
+
+		canbuild10=ARMUWCHEAT;		// ARMUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=ARMSY;		// ARMSONAR;	// Swap unneeded unit with intentional duplicate
+
+		canbuild12=ARMTIDE;		// ARMFDRAG;	// Swap unusable unit with intentional duplicate
+		canbuild13=ARMUWMEX;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild14=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=ARMFLLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=ARMFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=ARMFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild18=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild19=ARMFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild20=ARMFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild21=ARMLAB;
+		canbuild22=ARMVP;
+		canbuild23=ARMAP;
+		canbuild24=ARMSY;
+		canbuild25=ARMFHP;
+		canbuild26=ARMPLAT;
+
+		canbuild27=ARMFGUARD;	// Intentional later canbuild to affect arrival
+
+		canbuild28=ARMASY;		// Intentional later canbuild to affect arrival
+		canbuild29=ARMASPEN;	// Added v9.4 Submarine Pen; intentional later canbuild to affect arrival
+
+		canbuild30=ARMFWIN;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild31=ARMFMKR;		// Intentional later canbuild for lower priority
+		canbuild32=ARMFRAD;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		}
+	[ARMCSA]
+		{
+		canbuild1=ARMTIDE;
+		canbuild2=ARMUWMEX;
+		canbuild3=ARMFRT;
+		canbuild4=ARMFLLT;
+		canbuild5=ARMTL;
+		canbuild6=ARMFRT;		// ARMUWMFUS;	// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild7=ARMUWES;
+		canbuild8=ARMUWMS;
+		canbuild9=ARMFHLT;
+
+		canbuild10=ARMUWCHEAT;		// ARMUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=ARMFHP;		// ARMFDRAG;	// Swap unusable unit with intentional duplicate
+
+		canbuild12=ARMAP;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild13=ARMUWMEX;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild14=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=ARMFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=ARMFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild18=ARMTIDE;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild19=ARMUWMEX;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild20=ARMFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild21=ARMTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild22=ARMFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild23=ARMUWMS;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild24=ARMFWIN;		// Added new unit in v9.4
+
+		canbuild25=ARMPLAT;
+		canbuild26=ARMSY;
+		canbuild27=ARMFHP;
+
+		canbuild28=ARMFGUARD;	// Intentional later canbuild to affect arrival
+
+		canbuild29=ARMAPLAT;	// Intentional later canbuild to affect arrival
+
+		canbuild30=ARMFMKR;		// Intentional later canbuild for lower priority
+		canbuild31=ARMFRAD;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild32=ARMSONAR;	// Intentional later canbuild for lower priority
+		}
+	[ARMALAB]
+		{
+		canbuild1=ARMACK;
+		canbuild2=ARMAMPH;
+		canbuild3=ARMZEUS;
+		canbuild4=ARMFAST;
+		canbuild5=ARMFIDO;
+		canbuild6=ARMMAV;
+
+		canbuild7=ARMZEUS;
+		canbuild8=ARMASER;
+		canbuild9=ARMAABOT;
+		canbuild10=ARMSPID;
+		canbuild11=ARMDECOM;
+		canbuild12=ARMSNIPE;
+
+		canbuild13=ARMFARK;
+		canbuild14=ARMSPY;
+
+		canbuild15=ARMACK;		// Added intentional duplicate to boost chance of building
+		canbuild16=ARMACK;		// Added intentional duplicate to boost chance of building
+		canbuild17=ARMACK;		// Added intentional duplicate to boost chance of building
+		canbuild18=ARMZEUS;		// Added intentional duplicate to boost chance of building (AI build frequency anomaly)
+		canbuild19=ARMZEUS;		// Added intentional duplicate to boost chance of building (AI build frequency anomaly)
+		canbuild20=ARMZEUS;		// Added intentional duplicate to boost chance of building (AI build frequency anomaly)
+		canbuild21=ARMSNIPE;	// Intentional duplicate to boost build chance (AI build frequency anomaly v9.1.0_TEST_29)
+		canbuild22=ALL_L2;
+		}
+	[ARMAVP]
+		{
+		canbuild1=ARMACV;
+		canbuild2=ARMCROC;
+		canbuild3=ARMBULL;
+		canbuild4=ARMMERL;
+		canbuild5=ARMMART;
+		canbuild6=ARMMANNI;
+
+		canbuild7=ARMBULL;
+		canbuild8=ARMJAM;
+		canbuild9=ARMLATNK;
+		canbuild10=ARMYORK;
+		canbuild11=ARMSCAB;
+		canbuild12=ARMSPOT;
+
+//			canbuild13=ARMAFAV;		// Unit returned to T3 from T2 during v9.9.0
+		canbuild13=ARMACV;		// Added v9.1.0_TEST_29 Bandit (Stealth Assault Tank)
+
+		canbuild14=ARMACV;		// Added intentional duplicate to boost chance of building
+		canbuild15=ARMACV;		// Added intentional duplicate to boost chance of building
+		canbuild16=ARMACV;		// Added intentional duplicate to boost chance of building
+		canbuild17=ARMCROC;		// Added intentional duplicate to boost chance of building
+		canbuild18=ALL_L2;		
+		}
+	[ARMAAP]
+		{
+		canbuild1=ARMACA;
+		canbuild2=ARMAWAC;
+		canbuild3=ARMHAWK;
+		canbuild4=ARMPNIX;
+		canbuild5=ARMBRAWL;
+		canbuild6=ARMLANCE;
+		canbuild7=ARMBRAWL;
+
+//			canbuild8=ARMBRAWL;		// Replaced Transport - AI should not build Transports
+
+		canbuild8=ARMACA;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMACA;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMACA;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMBRAWL;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMASY]
+		{
+		canbuild1=ARMACSUB;
+		canbuild2=ARMSUBK;
+		canbuild3=ARMSCRAM;
+		canbuild4=ARMMSHIP;
+		canbuild5=ARMCARRY;
+		canbuild6=ARMCRUS;
+		canbuild7=ARMAAS;
+		canbuild8=ARMBATS;
+		canbuild9=ARMSSUB;		// Reactivated v9.1.0_TEST_29 Stalker (Assault Submarine)
+
+		canbuild10=ARMACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild11=ARMACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild12=ARMACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild13=ARMMSHIP;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMAHP]
+		{
+		canbuild1=ARMACH;
+		canbuild2=ARMHSTUN;
+		canbuild3=ARMHTANK;
+		canbuild4=ARMHART;
+		canbuild5=ARMHCAR;
+		canbuild6=ARMHJAM;
+
+		canbuild7=ARMHFLAK;
+		canbuild8=ARMHARL;
+		canbuild9=ARMACH;
+
+		canbuild10=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMHTANK;	// Added intentional duplicate to boost chance of building
+		canbuild14=ARMHANNI;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMFAHP]
+		{
+		canbuild1=ARMACH;
+		canbuild2=ARMHSTUN;
+		canbuild3=ARMHTANK;
+		canbuild4=ARMHART;
+		canbuild5=ARMHCAR;
+		canbuild6=ARMHJAM;
+
+		canbuild7=ARMHFLAK;
+		canbuild8=ARMHARL;
+		canbuild9=ARMACH;
+
+		canbuild10=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMACH;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMHTANK;	// Added intentional duplicate to boost chance of building
+		canbuild14=ARMHANNI;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMAPLAT]
+		{
+		canbuild1=ARMACSA;
+		canbuild2=ARMAWAC;
+		canbuild3=ARMHAWK;
+		canbuild4=ARMPNIX;
+		canbuild5=ARMBRAWL;
+		canbuild6=ARMLANCE;
+		canbuild7=ARMBRAWL;		// Added v9.1.0_TEST_29 Exodus (Carrier/Assist VTOL)
+
+//			canbuild8=ARMLANCE;		// Replaced Transport - AI should not build Transports
+
+		canbuild8=ARMACSA;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMACSA;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMACSA;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMBRAWL;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMASPEN]
+		{
+//		Submarine Pen (Produces Tech Level 1 & 2 Underwater Units)
+		canbuild1=ARMACSUB;
+		canbuild2=ARMSUBK;
+		canbuild3=ARMSSUB;
+		canbuild4=ARMSCRAM;
+		canbuild5=ARMSUB;
+
+		canbuild6=ARMCROC;
+		canbuild7=ARMSPY;
+		}
+	[ARMACK]
+		{
+		canbuild1=ARMLAB;
+
+		canbuild2=ARMARAD;
+		canbuild3=ARMFUS;
+		canbuild4=ARMMOHO;
+		canbuild5=ARMBRTHA;
+		canbuild6=ARMMMKR;
+
+		canbuild7=ARMANNI;
+		canbuild8=ARMAMD;
+		canbuild9=ARMFORT;
+		canbuild10=ARMFLAK;
+
+		canbuild11=ARMORION;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=ARMAMB;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=ARMELAB;
+
+		canbuild14=ARMJAMMER;
+		canbuild15=ARMSES;
+		canbuild16=ARMSMS;
+		canbuild17=ARMAAA;		// ARMSTUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=ARMARL;		// ARMEMP;	// Swap commented-out element with unit moved to T2 during v9.0.0
+
+		canbuild19=ARMGEN;		// ARMFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=ARMARL;		// Added intentional duplicate to boost chance of building
+		canbuild23=ARMAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=ARMFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=ARMEMP;		// Added intentional duplicate to boost chance of building
+//			canbuild26=ARMVULC;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[ARMACV]
+		{
+		canbuild1=ARMVP;
+
+		canbuild2=ARMARAD;
+		canbuild3=ARMFUS;
+		canbuild4=ARMMOHO;
+		canbuild5=ARMBRTHA;
+		canbuild6=ARMMMKR;
+
+		canbuild7=ARMANNI;
+		canbuild8=ARMAMD;
+		canbuild9=ARMFORT;
+		canbuild10=ARMFLAK;
+
+		canbuild11=ARMORION;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=ARMAMB;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=ARMGANT;
+
+		canbuild14=ARMJAMMER;
+		canbuild15=ARMSES;
+		canbuild16=ARMSMS;
+		canbuild17=ARMAAA;		// ARMSTUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=ARMARL;		// ARMEMP;	// Swap commented-out element with unit moved to T2 during v9.0.0
+
+		canbuild19=ARMGEN;		// ARMFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=ARMARL;		// Added intentional duplicate to boost chance of building
+		canbuild23=ARMAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=ARMFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=ARMEMP;		// Added intentional duplicate to boost chance of building
+//			canbuild26=ARMVULC;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[ARMACA]
+		{
+		canbuild1=ARMAP;
+
+		canbuild2=ARMARAD;
+		canbuild3=ARMFUS;
+		canbuild4=ARMMOHO;
+		canbuild5=ARMBRTHA;
+		canbuild6=ARMMMKR;
+
+		canbuild7=ARMANNI;
+		canbuild8=ARMAMD;
+		canbuild9=ARMFORT;
+		canbuild10=ARMFLAK;
+
+		canbuild11=ARMORION;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=ARMAMB;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=ARMFAB;
+
+		canbuild14=ARMJAMMER;
+		canbuild15=ARMSES;
+		canbuild16=ARMSMS;
+		canbuild17=ARMAAA;		// ARMSTUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=ARMARL;		// ARMEMP;	// Swap commented-out element with unit moved to T2 during v9.0.0
+
+		canbuild19=ARMGEN;		// ARMFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=ARMARL;		// Added intentional duplicate to boost chance of building
+		canbuild23=ARMAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=ARMGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=ARMFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=ARMEMP;		// Added intentional duplicate to boost chance of building
+//			canbuild26=ARMVULC;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[ARMACSA]
+		{
+		canbuild1=ARMAP;
+		canbuild2=ARMUWMFUS;	// Unit became T2 in v9.3
+		canbuild3=ARMATL;
+		canbuild4=ARMUWFUS;
+		canbuild5=ARMUWMMM;
+		canbuild6=ARMASON;
+		canbuild7=ARMUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild8=ARMPLAT;
+
+		canbuild9=ARMEPLAT;
+
+		canbuild10=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild11=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild12=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild13=ARMUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild14=ARMUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild15=ARMATL;		// Added intentional duplicate to boost chance of building
+		canbuild16=ARMUWFUS;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMACH]
+		{
+		canbuild1=ARMHP;
+		canbuild2=ARMFHP;
+
+		canbuild3=ARMARL;		// Added unit moved to T2 from T1 during v9.0.0
+
+		canbuild4=ARMSES;
+		canbuild5=ARMSMS;
+		canbuild6=ARMMOHO;
+		canbuild7=ARMFLAK;
+		canbuild8=ARMFUS;
+		canbuild9=ARMMMKR;
+		canbuild10=ARMANNI;
+
+//			canbuild11=ARMATL;		// ARMAMD;	// Swap unusable unit with intentional duplicate
+		canbuild11=ARMUWMFUS;	// ARMFORT;	// Unit became T2 in v9.3; swap with unusable unit
+
+		canbuild12=ARMORION;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild13=ARMAMB;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild14=ARMEHP;
+		canbuild15=ARMFEHP;
+
+//			canbuild15=ARMUWMOHO;	// ARMEMP;	// Swap commented-out element with intentional duplicate
+		canbuild16=ARMAAA;		// ARMSTUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+
+		canbuild17=ARMUWMOHO;
+		canbuild18=ARMUWFUS;
+		canbuild19=ARMATL;
+		canbuild20=ARMUWMMM;
+		canbuild21=ARMUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild22=ARMGEN;		// ARMFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+		canbuild23=ARMJAMMER;
+		canbuild24=ARMBRTHA;
+
+		canbuild25=ARMMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild26=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild27=ARMAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild28=ARMFUS;		// Added intentional duplicate to boost chance of building
+		canbuild29=ARMUWFUS;	// Added intentional duplicate to boost chance of building
+		canbuild30=ARMFLAK;		// Added intentional duplicate to boost chance of building
+
+		canbuild31=ARMASON;		// Intentional later canbuild for lower priority
+		canbuild32=ARMARAD;		// Intentional later canbuild for lower priority
+
+//		ACK ACV ACA intentionally bypass this T2 structure to lessen chance of it appearing too early for economy to support
+//			canbuild32=ARMVULC;	// Formerly bypass unit became T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[ARMACSUB]
+		{
+		canbuild1=ARMSY;
+
+		canbuild2=ARMUWMFUS;	// Unit became T2 in v9.3
+		canbuild3=ARMASON;
+		canbuild4=ARMUWFUS;
+		canbuild5=ARMUWMOHO;
+		canbuild6=ARMATL;
+		canbuild7=ARMUWMMM;
+		canbuild8=ARMUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild9=ARMASPEN;		// Added v9.4 Submarine Pen
+
+		canbuild10=ARMESY;
+		canbuild11=ARMESPEN;	// Added v9.4 Ultra Submarine Pen
+
+		canbuild12=ARMATL;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild14=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild15=ARMUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild16=ARMUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild17=ARMUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild18=ARMUWFUS;	// Added intentional duplicate to boost chance of building
+		canbuild19=ARMSONJAM;		
+		}
+	[ARMSPOT]
+		{
+		canbuild1=ARMSOLAR;
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		20191118 canbuild PROBABILITY TEST
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		canbuild2=ARMWIN;
+//			canbuild2=ARMMAKR;		// Temporary intentional duplicate for 20191118 canbuild PROBABILITY TEST
+
+//			The 2019118 probability test confirmed CK CV CA able to build WIN using canbuild32.  Scope of test was not to
+//			determine consistency, timeliness nor liklihood of the WIN.  It merely confirmed Limit WIN 4 was fulfilled before
+//			end of game.  Further probability tests revealed:
+//
+//			 a)	Test scenario map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew BALANCED:
+//
+//				Canbuild30=SY was able to marginally (but inadequately) allow Commander occasionally (2 of 8) build SY
+//				(with or without building any other factory) before entering Repair Patrol mode.
+//
+//				Canbuild29=SY adequately allowed Commander to build SY (6 of 8, remaining 2 built HP) before entering
+//				Repair Patrol mode.
+//
+//				Hard difficulty (AI economy multiplier 4x), first shipyard observations 20210222
+//				Map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew BALANCED:
+//				Canbuild17=SY (as used in tested SIDEDATA AI skew BALANCED) combined with "Weight SY 13" had Commander
+//				(6 of 8) start building SY either personally or via other construction unit by Game Time 5:00.  Then 7th
+//				Commander started SY at Game Time 6:30 after previously building HP and AP.  Remaining 8th Commander entered
+//				Repair Patrol mode at Game Time 8:30 without a SY but its team had completely built 2 FHP, HP and LAB.
+//
+//				Hard difficulty (AI economy multiplier 4x), first factory observations 20210222
+//				Map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew BALANCED:
+//				Canbuild17=SY (as used in tested SIDEDATA AI skew BALANCED) combined with "Weight SY 13" had Commander
+//				(7 of 8) start building first factory by Game Time 1:20.  Remaining Commander started at Game Time 5:15.
+//				The 8 first factories were 4 HP, 2 SY, 2 FHP.
+//
+//				Medium difficulty (AI economy multiplier 2x), first factory observations 20210222
+//				Map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew BALANCED:
+//				Canbuild17=SY (as used in tested SIDEDATA AI skew BALANCED) combined with "Weight SY 13" had Commander
+//				(6 of 8) start building first factory by Game Time 5:00.  Then 7th Commander started at Game Time 5:30.
+//				Remaining 8th Commander started at Game Time 7:00.  The 8 first factories were 2 FHP, 2 HP, 2 AP, 1 SY, 1 LAB.
+//
+//				Easy difficulty (noncheat), first factory observations 20210222
+//				Map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew BALANCED:
+//				Canbuild17=SY (as used in tested SIDEDATA AI skew BALANCED) combined with "Weight SY 13" had Commander
+//				(8 of 8) start building first factory by Game Time 5:00.  The 8 first factories were 3 FHP, 3 HP, 1 SY, 1 AP.
+//
+//				For comparison, map "ZM5 - Sandy Isles Extended", aiprofile=SeaBattle, SIDEDATA AI skew Favors WATER:
+//				Canbuild29=SY promptly (majority before Game Time 2:00) allowed Commander (8 of 8) to build first factory
+//				about twice as fast as skew BALANCED.  The 8 first factories were 7 SY, 1 PLAT.
+//
+//			 b) Test scenario map "WaterWorld_1 (r2010)", aiprofile=Waterwrld, SIDEDATA AI skew BALANCED:
+//
+//				Canbuild29=SY allowed Commanders to properly function.
+//
+//				Canbuild30=SY did not allow any Commanders (0 of 8) to exit Standby mode at game start.
+//
+//				Canbuild31=UWMEX prevented Commanders from building UWMEX but allowed Commanders to function.
+//
+//				Canbuild31=MEX avoided Commander (0 of 8) strolling from good start position underwater to build MEX before
+//				Game Time 5:00 (first five minutes).
+//
+//				Canbuild30=MEX allowed Commanders (8 of 8) to undesirably stroll long distance from good start position
+//				underwater to build MEX before Game Time 5:00 (first five minutes).
+//
+//			 c)	Test scenario map "[Dx] Deadly H", aiprofile=Hover, SIDEDATA AI skew BALANCED:
+//
+//				Canbuild30=UWMEX allowed Commander (8 of 8) to undesirably stroll long distance (majority walked 30% distance
+//				of the 20x20 map size) from good start position on land to build UMEX before Game Time 1:00 (first minute).
+//
+//				Canbuild31=UWMEX avoided Commander (0 of 8) strolling from good start position on land to build UMEX before
+//				test concluded at Game Time 10:00 (first ten minutes).
+
+		canbuild3=ARMESTOR;
+		canbuild4=ARMMSTOR;
+		canbuild5=ARMMEX;
+		canbuild6=ARMMAKR;
+
+		canbuild7=ARMLLT;
+		canbuild8=ARMRAD;
+		canbuild9=ARMHLT;
+		canbuild10=ARMRL;
+		canbuild11=ARMHLT;
+		canbuild12=ARMGUARD;
+		}
+/*	Following unit's presence is questionable; it is a player usable unit but its current game mechanics are unusable by AI
+	[ARMMLV]
+		{
+		canbuild1=ARMMINE1;		// Not worthwhile maintaining ALL_MINE designations since their FBIs' SIDE=ALL excludes AI
+		canbuild2=ARMMINE2;
+		canbuild3=ARMMINE3;
+		canbuild4=ARMMINE5;
+		canbuild5=ARMMINE6;
+		}
+*/
+	[ARMDECOM]
+		{
+		canbuild1=ARMSOLAR;
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		20191118 canbuild PROBABILITY TEST
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		canbuild2=ARMWIN;
+//			canbuild2=ARMFRT;		// Temporary intentional duplicate for 20191118 canbuild PROBABILITY TEST
+
+		canbuild3=ARMFRT;		// ARMGEN;		// Swap build option removal in v9.1.1 with intentional duplicate
+		canbuild4=ARMESTOR;
+		canbuild5=ARMMSTOR;
+		canbuild6=ARMMEX;
+		canbuild7=ARMFRT;		// ARMMAKR;		// Swap limited use unit with intentional duplicate
+
+		canbuild8=ARMLLT;
+		canbuild9=ARMRL;
+
+		canbuild10=ARMFWIN;		// ARMUWMFUS;	// Added new unit in v9.4 displacing build option removed in v9.3
+		canbuild11=ARMTIDE;
+		canbuild12=ARMUWES;
+		canbuild13=ARMUWMS;
+		canbuild14=ARMUWMEX;
+		canbuild15=ARMFRT;		// ARMFMKR;		// Swap limited use unit with intentional duplicate
+
+		canbuild16=ARMTL;
+		canbuild17=ARMFRT;
+		canbuild18=ARMFLLT;
+
+		canbuild19=ARMLAB;
+		canbuild20=ARMVP;
+		canbuild21=ARMAP;
+		canbuild22=ARMSY;
+		canbuild23=ARMHP;
+		canbuild24=ARMFHP;
+		canbuild25=ARMPLAT;		// v9.0.0 addition
+
+		canbuild26=ARMFRT;		// ARMASP;		// v9.0.0 addition	// Swap v9.1.1 unit removal with intentional duplicate
+		canbuild27=ARMGEO;		// Regained build option in v9.5; lost build option in v9.1.1
+
+		canbuild28=ARMRAD;
+		canbuild29=ARMFRAD;		// ARMDRAG;		// Added new unit in v9.4 replacing unusable unit
+		canbuild30=ARMSONAR;
+
+//			canbuild31=ARMCHEAT;	// Unneeded cheating unit
+//			canbuild32=ARMUWCHEAT;	// Unneeded cheating unit
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out lower priority canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//			canbuild33=ARMFDRAG;
+//			canbuild34=ARMGATE;
+		}
+	[ARMELAB]
+		{
+		canbuild1=ARMECK;
+//			canbuild2=ARMHSPID;		// Replaced Vermin - AI should not build Crawling Bombs
+		canbuild2=ARMCERB;
+		canbuild3=ARMASPID;
+		canbuild4=ARMNOVA;
+		canbuild5=ARMMECH;
+		canbuild6=ARMHSPID;		// Added v9.1.0_TEST_29 Marauder (Long Range Rapid-Fire Rocket Kbot)
+
+		canbuild7=ARMECK;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMECK;		// Added intentional duplicate to boost chance of building
+		canbuild9=ARMCRAWL;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMCERB;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMNOVA;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMGANT]
+		{
+		canbuild1=ARMECV;
+		canbuild2=ARMAFAV;		// Unit became T2 then returned to T3 during v9.9.0
+		canbuild3=ARMMBT;
+		canbuild4=ARMSIEGE;
+		canbuild5=ARMMCV;
+		canbuild6=ARMASAM;
+		canbuild7=ARMLGTNK;
+		canbuild8=ARMECV;		// Added v9.1.0_TEST_29 Mirage (Exp. Cloak Assault Tank)
+		canbuild9=ARMECV;		// Added v9.1.0_TEST_29 Expedition (Experimental Vehicle Command Carrier)
+		canbuild10=ARMMCV;		// Added v9.9.0 Custodian (Ultra Construction Assist Vehicle)
+
+		canbuild11=ARMECV;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMECV;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMECV;		// Added intentional duplicate to boost chance of building
+		canbuild14=ARMLGTNK;	// Added intentional duplicate to boost chance of building
+		canbuild15=ARMSIEGE;	// Added intentional duplicate to boost chance of building
+		canbuild16=ALL_L3;
+		}
+	[ARMFAB]
+		{
+		canbuild1=ARMECA;
+		canbuild2=ARMSR71;
+		canbuild3=ARMSFOIL;
+		canbuild4=ARMSBOMBER;
+		canbuild5=ARMWING;
+		canbuild6=ARMSGS;		// Added v9.1.0_TEST_29 Tempest (Experimental Aerial/Surface Control VTOL)
+		canbuild7=ARMNOMAD;		// Added v9.1.0_TEST_29 Exodus (Carrier/Assist/Build VTOL)
+		canbuild8=ARMT3SEAP;	// Added v9.3 Tornado (Heavy Torpedo Seaplane Figher/Bomber)
+
+//			Added in v9.4	ARMLIFT		Hercules (Heavy Multi-Unit Air Transport) - AI unusable
+//			Added in v9.4	ARMNOMAD	Nomad (Deployable Factory Extender, links to any lab) - AI unusable
+
+		canbuild9=ARMECA;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMECA;		// Added intentional duplicate to boost chance of building
+		canbuild11=ARMECA;		// Added intentional duplicate to boost chance of building
+		canbuild12=ARMSFOIL;	// Added intentional duplicate to boost chance of building
+		canbuild13=ARMLIFT;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMESY]
+		{
+		canbuild1=ARMECS;
+		canbuild2=ARMAACRUS;	// Added v9.1.0_TEST_29 Torrent (AA Battle Cruiser)
+		canbuild3=ARMAPT;		// Added v9.1.0_TEST_29 Riptide (Heavy Scout Ship)
+		canbuild4=ARMASW;		// Added v9.1.0_TEST_29 Arclight (Heavy Lightning Cruiser, anti-sub))
+		canbuild5=ARMXSHIP;		// Added v9.1.0_TEST_29 Lancer (Heavy LRPC Cruiser)
+		canbuild6=ARMDREAD;	// Added v9.7 Anvil (Metal Making Tanker)
+		canbuild7=ARMDREAD;	// Added v9.7 Catalyst (Fusion Tanker)
+		canbuild8=ARMSCAR;
+		canbuild9=ARMDREAD;
+
+		canbuild10=ARMNSUB;		// Reactivated v9.1.0_TEST_29 Tempest (Nuclear Assault Submarine)
+		canbuild11=ARMBSUB;
+
+//			Added in v9.4			ARMTSUB			Ark (Amphibious Armored Transport Sub)
+
+		canbuild12=ARMECS;		// Added intentional duplicate to boost chance of building
+		canbuild13=ARMECS;		// Added intentional duplicate to boost chance of building
+		canbuild14=ARMECS;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMEHP]
+		{
+		canbuild1=ARMECH;
+		canbuild2=ARMHBATS;
+		canbuild3=ARMHROY;		// Unit became T2 in v9.1.0_TEST_33x
+		canbuild4=ARMHCRUS;
+		canbuild5=ARMHBATS;
+
+		canbuild6=ARMHAAT;
+
+		canbuild7=ARMECH;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMECH;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMFEHP]
+		{
+		canbuild1=ARMECH;
+		canbuild2=ARMHBATS;
+		canbuild3=ARMHROY;		// Unit became T2 in v9.1.0_TEST_33x
+		canbuild4=ARMHCRUS;
+		canbuild5=ARMHBATS;
+
+		canbuild6=ARMHAAT;
+
+		canbuild7=ARMECH;		// Added intentional duplicate to boost chance of building
+		canbuild8=ARMECH;		// Added intentional duplicate to boost chance of building
+		}
+	[ARMEPLAT]
+		{
+		canbuild1=ARMECSA;		// Returned as build option in v9.1.1_GOLD after temporarily replaced by ECA
+		canbuild2=ARMSR71;
+		canbuild3=ARMSFOIL;
+		canbuild4=ARMSBOMBER;
+		canbuild5=ARMWING;
+		canbuild6=ARMSGS;		// Added v9.1.0_TEST_29 Tempest (Experimental Aerial/Surface Control VTOL)
+		canbuild7=ARMNOMAD;		// Added v9.1.0_TEST_29 Exodus (Carrier/Assist/Build VTOL)
+		canbuild8=ARMT3SEAP;	// Added v9.3 Tornado (Heavy Torpedo Seaplane Figher/Bomber)
+
+//			Added in v9.4	ARMLIFT		Hercules (Heavy Multi-Unit Air Transport) - AI unusable
+//			Added in v9.4	ARMNOMAD	Nomad (Deployable Factory Extender, links to any lab) - AI unusable
+
+		canbuild9=ARMSFOIL;		// Added intentional duplicate to boost chance of building
+		canbuild10=ARMLIFT;	// Added intentional duplicate to boost chance of building
+		}
+	[ARMESPEN]
+		{
+//		Ultra Submarine Pen (Produces All Tech Level Underwater Units)
+		canbuild1=ARMACSUB;
+		canbuild2=ARMSUBK;
+		canbuild3=ARMSSUB;
+		canbuild4=ARMSCRAM;
+		canbuild5=ARMSUB;
+
+		canbuild6=ARMPARASUB;
+		canbuild7=ARMNSUB;
+		canbuild8=ARMBSUB;
+
+//			Added in v9.4	ARMTSUB		Ark (Amphibious Armored Transport Sub)
+
+		canbuild9=ARMMANTA;
+		}
+
+	[ARMNOMAD]
+		{
+		canbuild1=ARMZEUS;
+		canbuild2=ARMFIDO;
+		canbuild3=ARMMAV;
+		canbuild4=ARMSNIPE;
+		canbuild5=ARMBULL;
+		canbuild6=ARMMANNI;
+
+		canbuild7=ARMCRUS;
+		canbuild8=ARMAAS;
+		canbuild9=ARMBATS;
+
+		canbuild10=ARMAMPH;
+		}
+
+	[ARMECK]
+		{
+		canbuild1=ARMALAB;
+
+		canbuild2=ARMOMNI;
+		canbuild3=ARMSFUS;
+		canbuild4=ARMMAS;
+		canbuild5=ARMSBERTHA;
+		canbuild6=ARMFORGE;
+
+		canbuild7=ARMTECH;
+		canbuild8=ARMSILO;
+		canbuild9=ARMSHGEN;
+		canbuild10=ARMSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=ARMLAB;
+		canbuild12=ARMVP;
+		canbuild13=ARMAP;
+		canbuild14=ARMSY;
+		canbuild15=ARMHP;
+
+		canbuild16=ARMAVP;
+		canbuild17=ARMAAP;
+		canbuild18=ARMASY;
+		canbuild19=ARMAHP;
+
+		canbuild20=ARMELAB;
+
+		canbuild21=ARMUCH;		// Added v9.6 Experimental Unit Fabricator
+		canbuild22=ARMUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=ARMFIELD;	// Unit became T3 in v9.3
+		canbuild24=ARMSTUN;		// Unit became T3 in v9.3
+
+		canbuild25=ARMVULC;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[ARMECV]
+		{
+		canbuild1=ARMAVP;
+
+		canbuild2=ARMOMNI;
+		canbuild3=ARMSFUS;
+		canbuild4=ARMMAS;
+		canbuild5=ARMSBERTHA;
+		canbuild6=ARMFORGE;
+
+		canbuild7=ARMTECH;
+		canbuild8=ARMSILO;
+		canbuild9=ARMSHGEN;
+		canbuild10=ARMSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=ARMLAB;
+		canbuild12=ARMVP;
+		canbuild13=ARMAP;
+		canbuild14=ARMSY;
+		canbuild15=ARMHP;
+
+		canbuild16=ARMALAB;
+		canbuild17=ARMAAP;
+		canbuild18=ARMASY;
+		canbuild19=ARMAHP;
+
+		canbuild20=ARMGANT;
+
+		canbuild21=ARMUCH;		// Added v9.6 Experimental Unit Fabricator
+		canbuild22=ARMUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=ARMFIELD;	// Unit became T3 in v9.3
+		canbuild24=ARMSTUN;		// Unit became T3 in v9.3
+
+		canbuild25=ARMVULC;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[ARMECA]
+		{
+		canbuild1=ARMAAP;
+
+		canbuild2=ARMOMNI;
+		canbuild3=ARMSFUS;
+		canbuild4=ARMMAS;
+		canbuild5=ARMSBERTHA;
+		canbuild6=ARMFORGE;
+
+		canbuild7=ARMTECH;
+		canbuild8=ARMSILO;
+		canbuild9=ARMSHGEN;
+		canbuild10=ARMSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=ARMASY;		// ARMLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=ARMAHP;		// ARMVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=ARMAP;
+		canbuild14=ARMSY;
+		canbuild15=ARMHP;
+
+		canbuild16=ARMASY;		// ARMALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=ARMAHP;		// ARMAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=ARMASY;
+		canbuild19=ARMAHP;
+
+		canbuild20=ARMFAB;
+
+		canbuild21=ARMUCH;		// Added v9.6 Experimental Unit Fabricator
+		canbuild22=ARMUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=ARMFIELD;	// Unit became T3 in v9.3
+		canbuild24=ARMSTUN;		// Unit became T3 in v9.3
+
+		canbuild25=ARMVULC;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[ARMECSA]
+		{
+		canbuild1=ARMAAP;
+
+		canbuild2=ARMOMNI;
+		canbuild3=ARMSFUS;
+		canbuild4=ARMMAS;
+		canbuild5=ARMSBERTHA;
+		canbuild6=ARMFORGE;
+
+		canbuild7=ARMTECH;
+		canbuild8=ARMSILO;
+		canbuild9=ARMSHGEN;
+		canbuild10=ARMSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=ARMASY;		// ARMLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=ARMAHP;		// ARMVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=ARMAP;
+		canbuild14=ARMSY;
+		canbuild15=ARMHP;
+
+		canbuild16=ARMASY;		// ARMALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=ARMAHP;		// ARMAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=ARMASY;
+		canbuild19=ARMAHP;
+
+		canbuild20=ARMFAB;
+
+		canbuild21=ARMUCH;		// Added v9.6 Experimental Unit Fabricator
+		canbuild22=ARMUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=ARMFIELD;	// Unit became T3 in v9.3
+		canbuild24=ARMSTUN;		// Unit became T3 in v9.3
+		}
+	[ARMECS]
+		{
+		canbuild1=ARMUWMAS;
+
+//		Following factories are v9.0.0 additions
+		canbuild2=ARMAPLAT;		// ARMLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild3=ARMFAHP;		// ARMVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild4=ARMPLAT;
+		canbuild5=ARMSY;
+		canbuild6=ARMFHP;
+
+		canbuild7=ARMAPLAT;		// ARMALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild8=ARMFAHP;		// ARMAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild9=ARMAPLAT;
+		canbuild10=ARMFAHP;
+
+		canbuild11=ARMESY;
+		canbuild12=ARMESPEN;	// Added v9.4 Ultra Submarine Pen
+
+		canbuild13=ARMASY;
+
+		canbuild14=ARMUCH;		// Added v9.7 Fleet Shipyard
+		}
+	[ARMECH]
+		{
+		canbuild1=ARMAHP;
+
+		canbuild2=ARMOMNI;
+		canbuild3=ARMSFUS;
+		canbuild4=ARMMAS;
+		canbuild5=ARMSBERTHA;
+		canbuild6=ARMFORGE;
+
+		canbuild7=ARMTECH;
+		canbuild8=ARMSILO;
+		canbuild9=ARMSHGEN;
+		canbuild10=ARMSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=ARMAAP;		// ARMLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=ARMASY;		// ARMVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=ARMAP;
+		canbuild14=ARMSY;
+		canbuild15=ARMHP;
+
+		canbuild16=ARMAAP;		// ARMALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=ARMASY;		// ARMAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=ARMAAP;
+		canbuild19=ARMASY;
+
+		canbuild20=ARMEHP;
+
+		canbuild21=ARMUCH;		// Added v9.6 Experimental Unit Fabricator
+		canbuild22=ARMUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=ARMFIELD;	// Unit became T3 in v9.3
+		canbuild24=ARMSTUN;		// Unit became T3 in v9.3
+
+		canbuild25=ARMVULC;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[ARMUCH]
+		{
+//		Tier 4 units sorted by ascending BuildTime lessens chance of longest BuildTime having unintended frequency boost skew
+//		All mobile T4 ground units have been amphibious from v9.7 through v9.9
+
+		canbuild1=ARMUCV;		// Experimental Construction Hovercraft
+//			canbuild2=ARMUCH;	// Reverted intentional duplicate because any extras can be leashed to same factory of origin
+
+		canbuild2=ARMSFIDO;		// Centaur (Experimental Hunter Quadra Kbot)
+		canbuild3=ARMSFIDO;		// Intentional duplicate boosts building chance; small footprint (for T4) helps path finding
+
+		canbuild4=ARMHFLAG;		// Added v9.9 Liberator (Dreadnought Assault Hovercraft)
+
+		canbuild5=ARMWALK;		// Added v9.8.5 Gargant (Exp. Omni Command Kbot)
+
+		canbuild6=ARMLFLAG;		// Avalon (Experimental Assault Command Tank)
+
+		canbuild7=ARMFFLAG;		// Supremacy (Siege Assault Command VTOL)
+
+		canbuild8=ARMNUKEBOMBER;	// Apocalypse (Experimental Nuclear Bomber)
+
+		canbuild9=ARMOLYMPUS;	// Added v9.8.5 Olympus (Mobile Super Nuclear Cannon)
+		
+		canbuild10=ARMZIG;		// Added v9.8.5 Panopticon (Panoptic Intel Array)
+
+		canbuild11=ARMUSCAR;		// Armada (Fleet Carrier, Repairs)
+
+		canbuild12=ARMUSCAR;		// Armada (Fleet Carrier, Repairs)
+
+		canbuild13=ARMHFLAG;		// Added v9.9 Liberator (Dreadnought Assault Hovercraft)
+
+		canbuild14=ARMUSUB;		// Added v9.9 Abyssal (Strategic Command Submarine)
+
+		canbuild15=ARMFLAG;		// Triumph (Flag Ship)
+
+		canbuild16=ARMFFLAG;		// Supremacy (Siege Assault Command VTOL)
+
+		canbuild17=ARMNUKEBOMBER;	// Apocalypse (Experimental Nuclear Bomber)
+		}
+
+/*	Following unit's future is uncertain, currently nonexistent in v9.1.0_TEST_29
+	[ARMNOMAD]
+		{
+		canbuild1=ARMNOMAD_FACT;
+		}
+	[ARMNOMAD_FACT]
+		{
+		canbuild1=ARMCK;
+		canbuild2=ARMPW;
+		canbuild3=ARMROCK;
+		canbuild4=ARMHAM;
+		canbuild5=ARMJETH;
+		canbuild6=ARMWAR;
+
+		canbuild7=ARMCV;
+		canbuild8=ARMFAV;
+		canbuild9=ARMFLASH;
+		canbuild10=ARMSTUMP;
+		canbuild11=ARMSAM;
+		canbuild12=ARMMLV;
+
+		canbuild13=ARMACV;
+		canbuild14=ARMCROC;
+		canbuild15=ARMBULL;
+		canbuild16=ARMMERL;
+		canbuild17=ARMMART;
+		canbuild18=ARMLATNK;
+
+		canbuild19=ARMSEER;
+		canbuild20=ARMJAM;
+		canbuild21=ARMMANNI;
+		canbuild22=ARMYORK;
+//			canbuild23=ARMSCAB;
+		canbuild23=ARMDECOM;
+
+		canbuild24=ARMACK;
+		canbuild25=ARMAMPH;
+		canbuild26=ARMZEUS;
+		canbuild27=ARMFAST;
+		canbuild28=ARMFIDO;
+		canbuild29=ARMMAV;
+
+		canbuild30=ARMMARK;
+		canbuild31=ARMASER;
+		canbuild32=ARMSNIPE;
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+			canbuild33=ARMVADER;
+			canbuild34=ARMMAV;
+			canbuild35=ARMDECOM;
+
+			canbuild36=ARMVERMIN;
+			canbuild37=ARMMBT;
+			canbuild38=ARMMECH;
+			canbuild39=ARMCRAWL;
+			canbuild40=ARMFLEA;
+			canbuild41=ARMJAV;
+
+			canbuild42=ARMNOMAD_SD;
+		}
+*/
+/*	Following unit's future is uncertain, currently nonexistent in v9.1.0_TEST_29
+	[ARMCOM_SUP]
+		{
+		canbuild1=ARMSOLAR;
+		canbuild2=ARMWIN;
+		canbuild3=ARMESTOR;
+		canbuild4=ARMMSTOR;
+		canbuild5=ARMMEX;
+		canbuild6=ARMMAKR;
+
+		canbuild7=ARMLLT;
+		canbuild8=ARMRAD;
+		canbuild9=ARMDRAG;
+		canbuild10=ARMRL;
+		canbuild11=ARMHLT;
+		canbuild12=ARMGUARD;
+
+		canbuild13=ARMUWMFUS;
+		canbuild14=ARMTIDE;
+		canbuild15=ARMUWES;
+		canbuild16=ARMUWMS;
+		canbuild17=ARMUWMEX;
+		canbuild18=ARMFMKR;
+
+		canbuild19=ARMTL;
+		canbuild20=ARMSONAR;
+		canbuild21=ARMFDRAG;
+		canbuild22=ARMFRT;
+		canbuild23=ARMFHLT;
+		canbuild24=ARMFGUARD;
+
+		canbuild25=ARMLAB;
+		canbuild26=ARMVP;
+		canbuild27=ARMAP;
+		canbuild28=ARMSY;
+		canbuild29=ARMHP;
+		canbuild30=ARMFHP;
+
+		canbuild31=ARMFLLT;
+		canbuild32=ARMGEO;
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		canbuild33=ARMGEN;
+		canbuild34=ARMASP;
+		canbuild35=;			// ARMARL;	// Unit has become T2
+//		canbuild36=ARMGATE;
+
+		canbuild37=ARMFAB;
+		canbuild38=ARMARAD;
+		canbuild39=ARMFUS;
+		canbuild40=ARMMOHO;
+		canbuild41=ARMBRTHA;
+		canbuild42=ARMMMKR;
+
+		canbuild43=ARMANNI;
+		canbuild44=ARMAMD;
+		canbuild45=ARMFORT;
+		canbuild46=ARMFLAK;
+		canbuild47=;			// ARMORION;	// Unit became T1 then retired in v9.1.1
+		canbuild48=;			// ARMAMB;		// Unit became T1 then retired in v9.1.1
+
+		canbuild49=ARMGANT;
+		canbuild50=ARMJAMMER;
+		canbuild51=ARMSES;
+		canbuild52=ARMSMS;
+//		canbuild53=ARMEMP;
+		canbuild54=ARMFIELD;
+
+		canbuild55=ARMESY;
+		canbuild56=ARMASON;
+		canbuild57=ARMUWFUS;
+		canbuild58=ARMUWMOHO;
+		canbuild59=ARMATL;
+		canbuild60=ARMUWMMM;
+
+//		canbuild61=ARMPLAT;
+
+		canbuild62=ARMCHEAT;
+		canbuild63=ARMUWCHEAT;
+		}
+*/
+	[ARMASP]
+		{
+		canbuild1=ARMASP_UPGRADE;		// Unit retired in v9.1.1 then revived in v9.3
+		canbuild2=ARMASP_UPGRADE;
+		}
+	[ARMHLT]
+		{
+		canbuild1=ARMHLT_UPGRADE;
+		canbuild2=ARMHLT_UPGRADE;
+		}
+	[ARMGUARD]
+		{
+		canbuild1=ARMGUARD_UPG;
+		canbuild2=ARMGUARD_UPG;
+		}
+	[ARMGEO]
+		{
+		canbuild1=ARMGEO_UPGRADE;
+		}
+	[ARMFUS]
+		{
+		canbuild1=ARMFUS_UPGRADE;
+		}
+	[ARMBRTHA]
+		{
+		canbuild1=ARMBRTHA_UPG;
+		canbuild2=ARMBRTHA_UPG;
+		}
+	[ARMSHGEN]
+		{
+		canbuild1=ARMSHGEN_UPG;			// Added ARMSHGEN_UPG entries that did not exist prior to v9.6.0 SIDEDATA
+		canbuild2=ARMSHGEN_UPG;
+		}
+	[ARMSFUS]
+		{
+		canbuild1=ARMSFUS_UPGRADE;
+		}
+/*	[ARMSBERTHA]
+		{
+		canbuild1=ARMSBERTHA_UPG;
+		canbuild2=ARMSBERTHA_UPG;
+		}
+	[ARMAMD]
+		{
+		canbuild1=CORVALK;
+		canbuild2=ARMATLAS;
+		}
+	[ARMCARRY]
+		{
+		canbuild1=CORVALK;
+		canbuild2=ARMATLAS;
+		}
+	[ARMEMP]
+		{
+		canbuild1=CORVALK;
+		canbuild2=ARMATLAS;
+		}
+	[ARMSILO]
+		{
+		canbuild1=CORVALK;
+		canbuild2=ARMATLAS;
+		}
+*/
+
+
+	[CORCOM]
+		{
+		canbuild1=CORCHEAT;
+		canbuild2=CORMEX;
+		canbuild3=CORUWCHEAT;
+		canbuild4=CORRL;
+		canbuild5=CORTIDE;
+		canbuild6=CORFLLT;
+
+		canbuild7=CORLAB;
+		canbuild8=CORVP;
+		canbuild9=CORAP;
+		canbuild10=CORSY;
+		canbuild11=CORHP;
+		canbuild12=CORFHP;
+
+		canbuild13=CORSOLAR;	
+		canbuild14=CORLLT;	
+		canbuild15=CORSOLAR;
+		canbuild16=CORSOLAR;
+		canbuild17=CORSOLAR;
+		canbuild18=CORMEX;
+		canbuild19=CORMEX;
+		canbuild20=CORUWMEX;
+		}
+
+
+	[CORLAB]
+		{
+		canbuild1=CORCK;
+		canbuild2=CORAK;
+		canbuild3=CORSTORM;
+		canbuild4=CORTHUD;
+		canbuild5=CORCRASH;
+		canbuild6=CORSC;
+
+		canbuild7=CORMAK;
+//			canbuild8=CORVOYR;		// Replaced Roach - AI should not build Crawling Bombs
+
+		canbuild8=CORCK;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCK;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCK;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORMAK;		// Added intentional duplicate to boost chance of building
+		}
+	[CORVP]
+		{
+		canbuild1=CORCV;
+		canbuild2=CORFAV;
+		canbuild3=CORGATOR;
+		canbuild4=CORRAID;
+		canbuild5=CORMIST;
+		canbuild6=CORLEVLR;
+
+//			canbuild7=CORVRAD;		// Replaced Mine Layer - AI should not build Mine Layers
+		canbuild7=CORLART;		// Added v9.9.0 Vandal (High Trajectory Light Artillery Vehicle)
+
+		canbuild8=CORCV;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCV;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCV;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORRAID;		// Added intentional duplicate to boost chance of building
+		}
+	[CORAP]
+		{
+		canbuild1=CORCA;
+		canbuild2=CORFINK;
+		canbuild3=CORVENG;
+		canbuild4=CORSHAD;
+		canbuild5=CORDPL;		// Added v9.1.0_TEST_29 Cormorant (Depthcharge Bomber)
+//			canbuild6=CORFIG;		// Replaced Mine Layer - AI should not build Mine Layers
+
+//			canbuild7=CORCA;		// Replaced Transport - AI should not build Transports
+
+		canbuild6=CORCA;		// Added intentional duplicate to boost chance of building
+		canbuild7=CORCA;		// Added intentional duplicate to boost chance of building
+		canbuild8=CORCA;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCA;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCA;		// Added intentional duplicate to boost chance of building
+		}
+	[CORSY]
+		{
+		canbuild1=CORCS;
+		canbuild2=CORPT;
+		canbuild3=CORSUB;
+		canbuild4=CORFRIG;
+		canbuild5=CORTSHIP;
+		canbuild6=CORROY;
+		canbuild7=CORAABOAT;	// Added v9.1.0_TEST_29 Corsair (AA Corvette)
+
+//			canbuild8=CORCS;		// Replaced Mine Layer - AI should not build Mine Layers
+
+		canbuild8=CORCS;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCS;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCS;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORCS;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORCS;		// Added intentional duplicate to boost chance of building
+ 		}
+	[CORHP]
+		{
+		canbuild1=CORCH;
+		canbuild2=CORSH;
+		canbuild3=CORSNAP;
+		canbuild4=CORAH;
+		canbuild5=CORMH;
+//			canbuild6=CORFH;		// Replaced Transport - AI should not build Transports
+		canbuild6=CORFH;
+		canbuild7=CORNH;		// Added v9.1.0_TEST_29 Wisp (Scavenger Hovercraft, Stealth)
+
+		canbuild8=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORSNAP;		// Added intentional duplicate to boost chance of building
+		}
+	[CORFHP]
+		{
+		canbuild1=CORCH;
+		canbuild2=CORSH;
+		canbuild3=CORSNAP;
+		canbuild4=CORAH;
+		canbuild5=CORMH;
+//			canbuild6=CORFH;		// Replaced Transport - AI should not build Transports
+		canbuild6=CORFH;
+		canbuild7=CORNH;		// Added v9.1.0_TEST_29 Wisp (Scavenger Hovercraft, Stealth)
+
+		canbuild8=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORCH;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORSNAP;		// Added intentional duplicate to boost chance of building
+		}
+	[CORPLAT]
+		{
+		canbuild1=CORCSA;
+		canbuild2=CORFINK;
+		canbuild3=CORVENG;
+		canbuild4=CORSHAD;
+		canbuild5=CORDPL;		// Added v9.1.0_TEST_29 Cormorant (Depthcharge Bomber)
+
+//			canbuild6=CORFIG;		// Replaced Transport - AI should not build Transports
+
+		canbuild6=CORCSA;		// Added intentional duplicate to boost chance of building
+		canbuild7=CORCSA;		// Added intentional duplicate to boost chance of building
+		canbuild8=CORCSA;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORCSA;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORCSA;		// Added intentional duplicate to boost chance of building
+		}
+	[CORCK]
+		{
+		canbuild1=CORSOLAR;
+		canbuild2=CORMEX;
+		canbuild3=CORCHEAT;
+		canbuild4=CORCHEAT;
+		canbuild5=CORHP;
+		canbuild6=CORMAKR;
+		canbuild7=CORWIN;
+
+		canbuild8=CORLAB;
+		canbuild9=CORVP;
+		canbuild10=CORAP;			// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild11=CORSY;
+		canbuild12=CORHP;
+		canbuild13=CORALAB;		// Intentional later canbuild to affect arrival; _UPGRADE revived v9.3 after retired in v9.1.1
+		canbuild14=CORALAB;		// Intentional later canbuild to affect arrival
+		
+		canbuild15=CORRAD;		// Intentional later canbuild for lower priority
+		}
+	[CORCV]
+		{
+
+		canbuild1=CORSOLAR;
+		canbuild2=CORMEX;
+		canbuild3=CORRL;
+		canbuild4=CORCHEAT;
+		canbuild5=CORHP;
+		canbuild6=CORMAKR;
+		canbuild7=CORWIN;
+
+		canbuild8=CORLAB;
+		canbuild9=CORVP;
+		canbuild10=CORAP;			// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild11=CORSY;
+		canbuild12=CORHP;
+		canbuild13=CORASP;		// Intentional later canbuild to affect arrival; _UPGRADE revived v9.3 after retired in v9.1.1
+		canbuild14=CORAVP;		// Intentional later canbuild to affect arrival
+		
+		canbuild15=CORRAD;		// Intentional later canbuild for lower priority
+
+		}
+
+
+	[CORCH]
+		{
+		canbuild1=CORSOLAR;
+		canbuild2=CORMEX;
+		canbuild3=CORLLT;
+		canbuild4=CORRL;
+		canbuild5=CORESTOR;
+		canbuild6=CORMSTOR;
+		canbuild7=CORHLT;
+
+		canbuild8=CORCHEAT;		// CORCHEAT;	// Swap unneeded cheat unit with intentional duplicate; skew is balanced
+		canbuild9=CORUWCHEAT;		// CORUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate; skew is balanced
+
+		canbuild10=CORTIDE;		// CORPLAS;		// Displace unit moved to T2 in v9.0.0
+		canbuild11=CORUWMEX;
+		canbuild12=CORFLLT;
+		canbuild13=CORFRT;
+		canbuild14=CORTL;
+		canbuild15=CORFHLT;
+
+		canbuild16=CORUWES;		// CORUWMFUS;	// Displace unit moved to T2 in v9.3
+		canbuild17=CORUWMS;		// CORGEN;		// Displace unit moved to T2 in v9.3
+
+		canbuild18=CORLAB;
+		canbuild19=CORVP;
+		canbuild20=CORAP;
+		canbuild21=CORSY;
+		canbuild22=CORHP;
+		canbuild23=CORFHP;
+		canbuild24=CORPLAT;		// v9.0.0 unit addition
+
+		canbuild25=CORASP;		// Intentional later canbuild to affect arrival; _UPGRADE revived v9.3 after retired in v9.1.1
+		canbuild26=CORGEO;		// Intentional later canbuild to affect arrival; earliest seen Game Time 6:30
+		canbuild27=CORPUN;		// Intentional later canbuild to affect arrival
+
+		canbuild28=CORFAHP;		// Intentional later canbuild to affect arrival
+		canbuild29=CORAHP;		// Intentional later canbuild to affect arrival
+
+		canbuild30=CORFPUN;		// Intentional later canbuild to affect arrival
+
+		canbuild31=CORFWIN;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild32=CORFMKR;		// Intentional later canbuild for lower priority
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out lower priority canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/*			canbuild33=CORWIN;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild34=CORMAKR;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild35=CORRAD;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild36=CORDRAG;		// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild37=CORSONAR;	// Intentionally beyond maximum canbuild32 limit because lower priority
+			canbuild38=CORFDRAG;	// Intentionally beyond maximum canbuild32 limit because lower priority
+
+			canbuild39=CORCHEAT;
+			canbuild40=CORUWCHEAT;
+			canbuild41=CORVIPE;		// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+			canbuild42=CORTOAST;	// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+*/
+		}
+	[CORCA]
+		{
+		canbuild1=CORSOLAR;
+		canbuild2=CORMEX;
+		canbuild3=CORRL;
+		canbuild4=CORLLT;
+		canbuild5=CORESTOR;
+		canbuild6=CORMSTOR;
+		canbuild7=CORHLT;
+		canbuild8=CORTL;
+
+		canbuild9=CORASP;		// Arrival of aircraft increases need for this; _UPGRADE revived v9.3 after retired in v9.1.1
+
+		canbuild10=CORCHEAT;		// CORCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=CORSY;		// CORPLAS;		// Swap unit moved to T2 in v9.0.0 with intentional duplicate
+		canbuild12=CORHP;		// CORDRAG;		// Swap unusable unit with intentional duplicate
+
+		canbuild13=CORSOLAR;	// CORGEN;		// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild14=CORMEX;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=CORRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=CORLLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild18=CORHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild19=CORMSTOR;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild20=CORRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild21=CORMAKR;
+		canbuild22=CORRL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild23=CORLAB;
+		canbuild24=CORVP;
+		canbuild25=CORAP;
+		canbuild26=CORSY;
+		canbuild27=CORHP;
+
+		canbuild28=CORGEO;		// Intentional later canbuild to affect arrival; earliest seen Game Time 6:30
+
+		canbuild29=CORAAP;		// Intentional later canbuild to affect arrival
+
+		canbuild30=CORPUN;		// Intentional later canbuild to affect arrival
+
+		canbuild31=CORWIN;		// Intentional later canbuild for lower priority
+		canbuild32=CORRAD;		// Intentional later canbuild for lower priority
+
+//			canbuild33=CORVIPE;		// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+//			canbuild34=CORTOAST;	// Intentional later canbuild to affect arrival; became T1 then retired in v9.1.1
+		}
+	[CORCS]
+		{
+		canbuild1=CORTIDE;
+		canbuild2=CORUWMEX;
+		canbuild3=CORFLLT;
+		canbuild4=CORFRT;
+		canbuild5=CORTL;
+		canbuild6=CORFRT;		// CORUWMFUS;	// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild7=CORUWES;
+		canbuild8=CORUWMS;
+		canbuild9=CORFHLT;
+
+		canbuild10=CORUWCHEAT;		// CORUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=CORSY;		// CORSONAR;	// Swap unneeded unit with intentional duplicate
+
+		canbuild12=CORTIDE;		// CORFDRAG;	// Swap unneeded unit with intentional duplicate
+		canbuild13=CORUWMEX;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild14=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=CORFLLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=CORFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=CORFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild18=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild19=CORFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild20=CORFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild21=CORLAB;
+		canbuild22=CORVP;
+		canbuild23=CORAP;
+		canbuild24=CORSY;
+		canbuild25=CORFHP;
+		canbuild26=CORPLAT;
+
+		canbuild27=CORFPUN;		// Intentional later canbuild to affect arrival
+
+		canbuild28=CORASY;		// Intentional later canbuild to affect arrival
+		canbuild29=CORASPEN;	// Added v9.4 Submarine Pen; intentional later canbuild to affect arrival
+
+		canbuild30=CORFWIN;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild31=CORFMKR;		// Intentional later canbuild for lower priority
+		canbuild32=CORFRAD;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		}
+	[CORCSA]
+		{
+		canbuild1=CORTIDE;
+		canbuild2=CORUWMEX;
+		canbuild3=CORFRT;
+		canbuild4=CORFLLT;
+		canbuild5=CORTL;
+		canbuild6=CORFRT;		// CORUWMFUS;	// Swap unit moved to T2 in v9.3 with intentional duplicate
+		canbuild7=CORUWES;
+		canbuild8=CORUWMS;
+		canbuild9=CORFHLT;
+
+		canbuild10=CORUWCHEAT;		// CORUWCHEAT;	// Swap unneeded cheat unit with intentional duplicate
+		canbuild11=CORFHP;		// CORFDRAG;	// Swap unusable unit with intentional duplicate
+
+		canbuild12=CORTIDE;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild13=CORUWMEX;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild14=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild15=CORFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild16=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild17=CORFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild18=CORTIDE;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild19=CORAP;	// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild20=CORFRT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild21=CORTL;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild22=CORFHLT;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+
+		canbuild23=CORUWMS;		// Added intentional duplicate to boost chance of building and is padding for later arrivals
+		canbuild24=CORFWIN;		// Added new unit in v9.4
+
+		canbuild25=CORPLAT;
+		canbuild26=CORSY;
+		canbuild27=CORFHP;
+
+		canbuild28=CORFPUN;		// Intentional later canbuild to affect arrival
+
+		canbuild29=CORAPLAT;	// Intentional later canbuild to affect arrival
+
+		canbuild30=CORFMKR;		// Intentional later canbuild for lower priority
+		canbuild31=CORFRAD;		// Added new unit in v9.4; intentional later canbuild for lower priority
+		canbuild32=CORSONAR;	// Intentional later canbuild for lower priority
+		}
+	[CORALAB]
+		{
+		canbuild1=CORACK;
+		canbuild2=CORAMPH;
+		canbuild3=CORPYRO;
+		canbuild4=CORFAST;
+		canbuild5=CORMORT;
+		canbuild6=CORCAN;
+
+		canbuild7=CORPYRO;
+		canbuild8=CORSPEC;
+		canbuild9=CORAABOT;
+		canbuild10=CORHRK;
+		canbuild11=CORDECOM;
+		canbuild12=CORSUMO;
+
+		canbuild13=CORNECRO;
+		canbuild14=CORSPY;
+
+		canbuild15=CORACK;		// Added intentional duplicate to boost chance of building
+		canbuild16=CORACK;		// Added intentional duplicate to boost chance of building
+		canbuild17=CORACK;		// Added intentional duplicate to boost chance of building
+		canbuild18=ALL_L2;
+		}
+	[CORAVP]
+		{
+		canbuild1=CORACV;
+		canbuild2=CORSEAL;
+		canbuild3=CORREAP;
+		canbuild4=CORVROC;
+		canbuild5=CORMART;
+		canbuild6=CORGOL;
+
+		canbuild7=CORREAP;
+		canbuild8=CORETER;
+		canbuild9=CORMANT;
+		canbuild10=CORSENT;
+		canbuild11=CORMABM;
+		canbuild12=CORMPAD;
+
+//			canbuild13=CORAFAV;		// Unit returned to T3 from T2 during v9.9.0
+		canbuild13=CORVRAD;		// Added v9.1.0_TEST_29 Wraith (Stealth Assault Tank)
+
+		canbuild14=CORACV;		// Added intentional duplicate to boost chance of building
+		canbuild15=CORACV;		// Added intentional duplicate to boost chance of building
+		canbuild16=CORACV;		// Added intentional duplicate to boost chance of building
+		canbuild17=CORSEAL;		// Added intentional duplicate to boost chance of building
+		canbuild18=ALL_L2;
+		}
+	[CORAAP]
+		{
+		canbuild1=CORACA;
+		canbuild2=CORAWAC;
+		canbuild3=CORVAMP;
+		canbuild4=CORHURC;
+		canbuild5=CORAPE;
+		canbuild6=CORTITAN;
+		canbuild7=CORAPE;
+
+		canbuild8=CORAPE;		// Added to be consistent with player build options
+
+		canbuild9=CORACA;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORACA;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORACA;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORAPE;		// Added intentional duplicate to boost chance of building
+		}
+	[CORASY]
+		{
+		canbuild1=CORACSUB;
+		canbuild2=CORSHARK;
+		canbuild3=CORMSHIP;
+		canbuild4=CORCARRY;
+		canbuild5=CORCRUS;
+		canbuild6=CORSJAM;
+		canbuild7=CORARCH;
+		canbuild8=CORBATS;
+		canbuild9=CORSSUB;		// Reactivated v9.1.0_TEST_29 Leviathan (Assault Submarine)
+
+		canbuild10=CORACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild11=CORACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild12=CORACSUB;	// Added intentional duplicate to boost chance of building
+		canbuild13=CORMSHIP;	// Added intentional duplicate to boost chance of building
+		}
+	[CORAHP]
+		{
+		canbuild1=CORACH;
+		canbuild2=CORHLAS;
+		canbuild3=CORHTANK;
+		canbuild4=CORHART;
+		canbuild5=CORHCAR;
+		canbuild6=CORHJAM;
+
+		canbuild7=CORHFLAK;
+		canbuild8=CORHARL;
+		canbuild9=CORACH;		// Unit became T2 in v9.1.0_TEST_33x
+
+		canbuild10=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORHTANK;	// Added intentional duplicate to boost chance of building
+		canbuild14=CORHDDM;		// Added intentional duplicate to boost chance of building
+		}
+	[CORFAHP]
+		{
+		canbuild1=CORACH;
+		canbuild2=CORHLAS;
+		canbuild3=CORHTANK;
+		canbuild4=CORHART;
+		canbuild5=CORHCAR;
+		canbuild6=CORHJAM;
+
+		canbuild7=CORHFLAK;
+		canbuild8=CORHARL;
+		canbuild9=CORACH;		// Unit became T2 in v9.1.0_TEST_33x
+
+		canbuild10=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORACH;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORHTANK;	// Added intentional duplicate to boost chance of building
+		canbuild14=CORHDDM;		// Added intentional duplicate to boost chance of building
+		}
+	[CORAPLAT]
+		{
+		canbuild1=CORACSA;
+		canbuild2=CORAWAC;
+		canbuild3=CORVAMP;
+		canbuild4=CORHURC;
+		canbuild5=CORAPE;
+		canbuild6=CORTITAN;
+		canbuild7=CORAPE;
+
+		canbuild8=CORTITAN;
+
+		canbuild9=CORACSA;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORACSA;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORACSA;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORAPE;		// Added intentional duplicate to boost chance of building
+		}
+	[CORASPEN]
+		{
+//		Submarine Pen (Produces Tech Level 1 & 2 Underwater Units)
+		canbuild1=CORACSUB;
+		canbuild2=CORSHARK;
+		canbuild3=CORSSUB;
+		canbuild4=CORSJAM;
+		canbuild5=CORSUB;
+
+		canbuild6=CORSEAL;
+		canbuild7=CORSPY;
+		}
+	[CORACK]
+		{
+		canbuild1=CORLAB;
+
+		canbuild2=CORARAD;
+		canbuild3=CORFUS;
+		canbuild4=CORMOHO;
+		canbuild5=CORINT;
+		canbuild6=CORMMKR;
+
+		canbuild7=CORDOOM;
+		canbuild8=CORFMD;
+		canbuild9=CORFORT;
+		canbuild10=CORFLAK;
+
+		canbuild11=CORVIPE;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=CORTOAST;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=CORGANT;
+
+		canbuild14=CORJAMMER;
+		canbuild15=CORSES;
+		canbuild16=CORSMS;
+		canbuild17=CORAAA;		// CORSPUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=CORPLAS;		// CORTRON;	// Swap commented-out element with unit moved to T2 from T1 during v9.0.0
+
+		canbuild19=CORGEN;		// CORFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=CORPLAS;		// Added intentional duplicate to boost chance of building
+		canbuild23=CORAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=CORFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=CORTRON;		// Added intentional duplicate to boost chance of building
+//			canbuild26=CORBUZZ;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[CORACV]
+		{
+		canbuild1=CORVP;
+
+		canbuild2=CORARAD;
+		canbuild3=CORFUS;
+		canbuild4=CORMOHO;
+		canbuild5=CORINT;
+		canbuild6=CORMMKR;
+
+		canbuild7=CORDOOM;
+		canbuild8=CORFMD;
+		canbuild9=CORFORT;
+		canbuild10=CORFLAK;
+
+		canbuild11=CORVIPE;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=CORTOAST;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=COREVP;
+
+		canbuild14=CORJAMMER;
+		canbuild15=CORSES;
+		canbuild16=CORSMS;
+		canbuild17=CORAAA;		// CORSPUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=CORPLAS;		// CORTRON;	// Swap commented-out element with unit moved to T2 from T1 during v9.0.0
+
+		canbuild19=CORGEN;		// CORFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=CORPLAS;		// Added intentional duplicate to boost chance of building
+		canbuild23=CORAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=CORFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=CORTRON;		// Added intentional duplicate to boost chance of building
+//			canbuild26=CORBUZZ;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[CORACA]
+		{
+		canbuild1=CORAP;
+
+		canbuild2=CORARAD;
+		canbuild3=CORFUS;
+		canbuild4=CORMOHO;
+		canbuild5=CORINT;
+		canbuild6=CORMMKR;
+
+		canbuild7=CORDOOM;
+		canbuild8=CORFMD;
+		canbuild9=CORFORT;
+		canbuild10=CORFLAK;
+
+		canbuild11=CORVIPE;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild12=CORTOAST;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild13=CORFAB;
+
+		canbuild14=CORJAMMER;
+		canbuild15=CORSES;
+		canbuild16=CORSMS;
+		canbuild17=CORAAA;		// CORSPUN;	// Added new v9.4 unit; swap with unit that became T3 in v9.3
+		canbuild18=CORPLAS;		// CORTRON;	// Swap commented-out element with unit moved to T2 from T1 during v9.0.0
+
+		canbuild19=CORGEN;		// CORFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+
+		canbuild20=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild21=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild22=CORPLAS;		// Added intentional duplicate to boost chance of building
+		canbuild23=CORAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild24=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild25=CORGEN;		// Unit became T2 in v9.4; intentional duplicate to boost chance of building
+		canbuild26=CORFUS;		// Added intentional duplicate to boost chance of building
+		canbuild27=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild28=CORTRON;		// Added intentional duplicate to boost chance of building
+//			canbuild26=CORBUZZ;	// ACH had build duty; moved to T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[CORACSA]
+		{
+		canbuild1=CORUWMOHO;
+		canbuild2=CORUWMFUS;	// Unit became T2 in v9.3
+		canbuild3=CORATL;
+		canbuild4=CORUWFUS;
+		canbuild5=CORUWMMM;
+		canbuild6=CORASON;
+		canbuild7=CORUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild8=CORPLAT;
+
+		canbuild9=COREPLAT;
+
+		canbuild10=CORAP;	// Added intentional duplicate to boost chance of building
+		canbuild11=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild12=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild13=CORUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild14=CORUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild15=CORATL;		// Added intentional duplicate to boost chance of building
+		canbuild16=CORUWFUS;	// Added intentional duplicate to boost chance of building
+		}
+	[CORACH]
+		{
+		canbuild1=CORHP;
+		canbuild2=CORFHP;
+
+		canbuild3=CORPLAS;		// Added unit moved to T2 from T1 during v9.0.0
+
+		canbuild4=CORSES;
+		canbuild5=CORSMS;
+		canbuild6=CORMOHO;
+		canbuild7=CORFLAK;
+		canbuild8=CORFUS;
+		canbuild9=CORMMKR;
+		canbuild10=CORDOOM;
+
+//			canbuild11=CORATL;		// CORFMD;	// Swap unusable unit with intentional duplicate
+		canbuild11=CORUWMFUS;	// CORFORT;	// Unit became T2 in v9.3; swap with unusable unit
+
+		canbuild12=CORVIPE;		// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+		canbuild13=CORTOAST;	// Unit became T1 then retired in v9.1.1 then revived as T2 in v9.8.5
+
+		canbuild14=COREHP;
+		canbuild15=CORFEHP;
+
+//			canbuild15=CORUWMOHO;	// CORTRON;		// Swap commented-out element with intentional duplicate
+		canbuild16=CORAAA;		// CORSPUN;		// Added new v9.4 unit; swap with unit that became T3 in v9.3
+
+		canbuild17=CORUWMOHO;
+		canbuild18=CORUWFUS;
+		canbuild19=CORATL;
+		canbuild20=CORUWMMM;
+		canbuild21=CORUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild22=CORGEN;		// CORFIELD;	// Unit became T2 in v9.4; swap with unit moved to T3 in v9.3
+		canbuild23=CORJAMMER;
+		canbuild24=CORINT;
+
+		canbuild25=CORMOHO;		// Added intentional duplicate to boost chance of building
+		canbuild26=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild27=CORAAA;		// Added new v9.4 unit; intentional duplicate to boost chance of building
+		canbuild28=CORFUS;		// Added intentional duplicate to boost chance of building
+		canbuild29=CORUWFUS;	// Added intentional duplicate to boost chance of building
+		canbuild30=CORFLAK;		// Added intentional duplicate to boost chance of building
+
+		canbuild31=CORASON;		// Intentional later canbuild for lower priority
+		canbuild32=CORARAD;		// Intentional later canbuild for lower priority
+
+//		ACK ACV ACA intentionally bypass this T2 structure to lessen chance of it appearing too early for economy to support
+//			canbuild32=CORBUZZ;	// Formerly bypass unit became T2 from T3 then retired in v9.1.1 then revived as T3 in v9.8.5
+		}
+	[CORACSUB]
+		{
+		canbuild1=CORSY;
+
+		canbuild2=CORUWMFUS;	// Unit became T2 in v9.3
+		canbuild3=CORASON;
+		canbuild4=CORUWFUS;
+		canbuild5=CORUWMOHO;
+		canbuild6=CORATL;
+		canbuild7=CORUWMMM;
+		canbuild8=CORUWCS;		// Added v9.1.0_TEST_29 Underwater Combined Storage
+
+		canbuild9=CORASPEN;		// Added v9.4 Submarine Pen
+
+		canbuild10=CORESY;
+		canbuild11=CORESPEN;	// Added v9.4 Ultra Submarine Pen
+
+		canbuild12=CORATL;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild14=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild15=CORUWMOHO;	// Added intentional duplicate to boost chance of building
+		canbuild16=CORUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild17=CORUWMFUS;	// Unit became T2 in v9.3; intentional duplicate to boost chance of building
+		canbuild18=CORUWFUS;	// Added intentional duplicate to boost chance of building
+		canbuild19=CORSONJAM;
+		}
+	[CORMPAD]
+		{
+		canbuild1=CORSOLAR;
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		20191118 canbuild PROBABILITY TEST
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		canbuild2=CORWIN;
+//			canbuild2=CORMAKR;		// Temporary intentional duplicate for 20191118 canbuild PROBABILITY TEST
+
+		canbuild3=CORESTOR;
+		canbuild4=CORMSTOR;
+		canbuild5=CORMEX;
+		canbuild6=CORMAKR;
+
+		canbuild7=CORLLT;
+		canbuild8=CORRAD;
+		canbuild9=CORHLT;
+		canbuild10=CORRL;
+		canbuild11=CORHLT;
+		canbuild12=CORPUN;
+		}
+/*	Following unit's presence is questionable; it is a player usable unit but its current game mechanics are unusable by AI
+	[CORMLV]
+		{
+		canbuild1=CORMINE1;		// Not worthwhile maintaining ALL_MINE designations since their FBIs' SIDE=ALL excludes AI
+		canbuild2=CORMINE2;
+		canbuild3=CORMINE3;
+		canbuild4=CORMINE5;
+		canbuild5=CORMINE6;
+		}
+*/
+	[CORDECOM]
+		{
+		canbuild1=CORSOLAR;
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		20191118 canbuild PROBABILITY TEST
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		canbuild2=CORWIN;
+//			canbuild2=CORFRT;		// Temporary intentional duplicate for 20191118 canbuild PROBABILITY TEST
+
+		canbuild3=CORFRT;		// CORGEN;		// Swap build option removal v9.1.1 with intentional duplicate
+		canbuild4=CORESTOR;
+		canbuild5=CORMSTOR;
+		canbuild6=CORMEX;
+		canbuild7=CORFRT;		// CORMAKR;		// Swap limited use unit with intentional duplicate
+
+		canbuild8=CORLLT;
+		canbuild9=CORRL;
+
+		canbuild10=CORFWIN;		// CORUWMFUS;	// Added new unit in v9.4 displacing unit moved to T2 in v9.3
+		canbuild11=CORTIDE;
+		canbuild12=CORUWES;
+		canbuild13=CORUWMS;
+		canbuild14=CORUWMEX;
+		canbuild15=CORFRT;		// CORFMKR;		// Swap limited use unit with intentional duplicate
+
+		canbuild16=CORTL;
+		canbuild17=CORFRT;
+		canbuild18=CORFLLT;
+
+		canbuild19=CORLAB;
+		canbuild20=CORVP;
+		canbuild21=CORAP;
+		canbuild22=CORSY;
+		canbuild23=CORHP;
+		canbuild24=CORFHP;
+		canbuild25=CORPLAT;		// v9.0.0 addition
+
+		canbuild26=CORFRT;		// CORASP;		// v9.0.0 addition	// Swap v9.1.1 unit removal with intentional duplicate
+		canbuild27=CORGEO;		// Regained build option in v9.5; lost build option in v9.1
+
+		canbuild28=CORRAD;
+		canbuild29=CORFRAD;		// CORDRAG;		// Added new unit in v9.4 replacing unusable unit
+		canbuild30=CORSONAR;
+
+//			canbuild31=CORCHEAT;	// Unneeded cheating unit
+//			canbuild32=CORUWCHEAT;	// Unneeded cheating unit
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out lower priority canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//			canbuild33=CORFDRAG;
+//			canbuild34=CORGATE;
+		}
+	[CORGANT]
+		{
+		canbuild1=CORECK;
+//			canbuild2=CORHSPID;		// Replaced Defiler - AI should not build Crawling Bombs
+		canbuild2=CORTALOS;
+		canbuild3=CORTAC;
+		canbuild4=CORJUGG;
+		canbuild5=CORKROG;
+		canbuild6=CORHSPID;		// Added v9.1.0_TEST_29 Widow (Long Range Rapid-Fire Rocket Kbot)
+		canbuild7=CORSPID;		// Added v9.9.0 Patron (Ultra Construction Assist Kbot); unit became T3 Patron in v9.9.0
+
+		canbuild8=CORECK;		// Added intentional duplicate to boost chance of building
+		canbuild9=CORECK;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORECK;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORJUGG;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORTALOS;	// Added intentional duplicate to boost chance of building
+		}
+	[COREVP]
+		{
+		canbuild1=CORECV;
+		canbuild2=CORAFAV;		// Unit became T2 then returned to T3 during v9.9.0
+		canbuild3=CORBEH;
+		canbuild4=CORPOUND;
+		canbuild5=CORMCV;
+		canbuild6=CORAMIST;
+		canbuild7=CORLSTNK;
+		canbuild8=CORMCV;		// Added v9.1.0_TEST_29 Mirage (Exp. Cloak Assault Tank)
+		canbuild9=CORMCV;		// Added v9.1.0_TEST_29 Halcyon (Experimental Vehicle Command Carrier)
+//			canbuild10=CORION;		// Added v9.8.5 Tsar (Exp. Mobile Ion Cannon Command Vehicle)
+		canbuild10=CORMCV;		// Added v9.8.5 Tsar (Radiation Projection Vehicle) UnitName was CORION in v9.8.6
+
+		canbuild11=CORECV;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORECV;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORECV;		// Added intentional duplicate to boost chance of building
+		canbuild14=CORLSTNK;	// Added intentional duplicate to boost chance of building
+		canbuild15=CORBEH;		// Added intentional duplicate to boost chance of building
+		canbuild16=ALL_L3;
+		}
+	[CORFAB]
+		{
+		canbuild1=CORECA;
+		canbuild2=CORECLIPSE;
+		canbuild3=CORSKYNET;
+		canbuild4=CORSHOCK;
+		canbuild5=CORVIND;
+		canbuild6=CORSGS;		// Added v9.1.0_TEST_29 Harpy (Air/Ground Superiority Fighter)
+		canbuild7=CORBULK;		// Added v9.1.0_TEST_29 Sanctum (Carrier/Assist/Build VTOL)
+		canbuild8=CORT3SEAP;	// Added v9.3 Typhoon (Heavy Torpedo Seaplane Bomber)
+
+//			Added in v9.4	CORLIFT		Dragonfly (Heavy Multi-Unit Air Transport) - AI unusable
+//			Added in v9.4	CORBULK		Horizon (Teleportation Science VTOL, links to Galactic Gates) - AI unusable
+
+		canbuild9=CORECA;		// Added intentional duplicate to boost chance of building
+		canbuild10=CORECA;		// Added intentional duplicate to boost chance of building
+		canbuild11=CORECA;		// Added intentional duplicate to boost chance of building
+		canbuild12=CORSKYNET;	// Added intentional duplicate to boost chance of building
+		canbuild13=CORLIFT;	// Added intentional duplicate to boost chance of building
+		}
+	[CORESY]
+		{
+		canbuild1=CORECS;
+		canbuild2=CORAACRUS;	// Added v9.1.0_TEST_29 Monitor (AA Monitor)
+		canbuild3=CORAPT;		// Added v9.1.0_TEST_29 Slipstream (Heavy Scout Ship)
+		canbuild4=CORBURN;		// Reactivated v9.1.0_TEST_29 Inferno (Flamethrower Monitor
+		canbuild5=CORRANCOR;	// Reactivated v9.1.0_TEST_29 Rancor (Bombardment Monitor, can walk on low level land)
+		canbuild6=CORDREAD;	// Added v9.7 Replinisher (Metal Making Tanker)
+		canbuild7=CORDREAD;	// Added v9.7 Aquifer (Fusion Tanker)
+		canbuild8=CORSCAR;
+		canbuild9=CORDREAD;
+
+		canbuild10=CORNSUB;		// Added v9.1.0_TEST_29 Hammerhead (Nuclear Assault Submarine)
+		canbuild11=CORBSUB;
+
+		canbuild12=CORECS;		// Added intentional duplicate to boost chance of building
+		canbuild13=CORECS;		// Added intentional duplicate to boost chance of building
+		canbuild14=CORECS;		// Added intentional duplicate to boost chance of building
+		}
+	[COREHP]
+		{
+		canbuild1=CORECH;
+		canbuild2=CORHBATS;
+		canbuild3=CORHROY;
+		canbuild4=CORHCRUS;
+		canbuild5=CORHBATS;
+
+		canbuild6=CORHAAT;
+
+		canbuild7=CORECH;		// Added intentional duplicate to boost chance of building
+		canbuild8=CORECH;		// Added intentional duplicate to boost chance of building
+		}
+	[CORFEHP]
+		{
+		canbuild1=CORECH;
+		canbuild2=CORHBATS;
+		canbuild3=CORHROY;
+		canbuild4=CORHCRUS;
+		canbuild5=CORHBATS;
+
+		canbuild6=CORHAAT;
+
+		canbuild7=CORECH;		// Added intentional duplicate to boost chance of building
+		canbuild8=CORECH;		// Added intentional duplicate to boost chance of building
+		}
+	[COREPLAT]
+		{
+		canbuild1=CORECSA;		// Returned as build option in v9.1.1_GOLD after temporarily replaced by ECA
+		canbuild2=CORECLIPSE;
+		canbuild3=CORSKYNET;
+		canbuild4=CORSHOCK;
+		canbuild5=CORVIND;
+		canbuild6=CORSGS;		// Added v9.1.0_TEST_29 Harpy (Air/Ground Superiority Fighter)
+		canbuild7=CORBULK;		// Added v9.1.0_TEST_29 Sanctum (Carrier/Assist/Build VTOL)
+		canbuild8=CORT3SEAP;	// Added v9.3 Typhoon (Heavy Torpedo Seaplane Bomber)
+
+//			Added in v9.4	CORLIFT		Dragonfly (Heavy Multi-Unit Air Transport) - AI unusable
+//			Added in v9.4	CORBULK		Horizon (Teleportation Science VTOL, links to Galactic Gates) - AI unusable
+
+		canbuild9=CORSKYNET;	// Added intentional duplicate to boost chance of building
+		canbuild10=CORLIFT;	// Added intentional duplicate to boost chance of building
+		}
+	[CORESPEN]
+		{
+//		Ultra Submarine Pen (Produces All Tech Level Underwater Units)
+		canbuild1=CORACSUB;
+		canbuild2=CORSHARK;
+		canbuild3=CORSSUB;
+		canbuild4=CORTROG;
+		canbuild5=CORSUB;
+
+		canbuild6=CORSQUID;
+		canbuild7=CORNSUB;
+		canbuild8=CORBSUB;
+
+		canbuild9=CORCAPSUB;
+		}
+
+	[CORBULK]
+		{
+		canbuild1=CORPYRO;
+		canbuild2=CORMORT;
+		canbuild3=CORCAN;
+		canbuild4=CORSUMO;
+		canbuild5=CORREAP;
+		canbuild6=CORGOL;
+
+		canbuild7=CORCRUS;
+		canbuild8=CORARCH;
+		canbuild9=CORBATS;
+
+		canbuild10=CORSSUB;
+		}
+
+	[CORECK]
+		{
+		canbuild1=CORALAB;
+
+		canbuild2=COROMNI;
+		canbuild3=CORSFUS;
+		canbuild4=CORMAS;
+		canbuild5=CORNOVA;
+		canbuild6=CORVAULT;
+
+		canbuild7=CORTECH;
+		canbuild8=CORSILO;
+		canbuild9=CORSHGEN;
+		canbuild10=CORSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=CORLAB;
+		canbuild12=CORVP;
+		canbuild13=CORAP;
+		canbuild14=CORSY;
+		canbuild15=CORHP;
+
+		canbuild16=CORAVP;
+		canbuild17=CORAAP;
+		canbuild18=CORASY;
+		canbuild19=CORAHP;
+
+		canbuild20=CORGANT;
+
+		canbuild21=CORUCH;		// Added v9.6 Experimental Unit Foundry
+		canbuild22=CORUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=CORFIELD;	// Unit became T3 in v9.3
+		canbuild24=CORSPUN;		// Unit became T3 in v9.3
+
+		canbuild25=CORBUZZ;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[CORECV]
+		{
+		canbuild1=CORAVP;
+
+		canbuild2=COROMNI;
+		canbuild3=CORSFUS;
+		canbuild4=CORMAS;
+		canbuild5=CORNOVA;
+		canbuild6=CORVAULT;
+
+		canbuild7=CORTECH;
+		canbuild8=CORSILO;
+		canbuild9=CORSHGEN;
+		canbuild10=CORSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=CORLAB;
+		canbuild12=CORVP;
+		canbuild13=CORAP;
+		canbuild14=CORSY;
+		canbuild15=CORHP;
+
+		canbuild16=CORALAB;
+		canbuild17=CORAAP;
+		canbuild18=CORASY;
+		canbuild19=CORAHP;
+
+		canbuild20=COREVP;
+
+		canbuild21=CORUCH;		// Added v9.6 Experimental Unit Foundry
+		canbuild22=CORUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=CORFIELD;	// Unit became T3 in v9.3
+		canbuild24=CORSPUN;		// Unit became T3 in v9.3
+
+		canbuild25=CORBUZZ;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[CORECA]
+		{
+		canbuild1=CORAAP;
+
+		canbuild2=COROMNI;
+		canbuild3=CORSFUS;
+		canbuild4=CORMAS;
+		canbuild5=CORNOVA;
+		canbuild6=CORVAULT;
+
+		canbuild7=CORTECH;
+		canbuild8=CORSILO;
+		canbuild9=CORSHGEN;
+		canbuild10=CORSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=CORASY;		// CORLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=CORAHP;		// CORVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=CORAP;
+		canbuild14=CORSY;
+		canbuild15=CORHP;
+
+		canbuild16=CORASY;		// CORALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=CORAHP;		// CORAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=CORASY;
+		canbuild19=CORAHP;
+
+		canbuild20=CORFAB;
+
+		canbuild21=CORUCH;		// Added v9.6 Experimental Unit Foundry
+		canbuild22=CORUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=CORFIELD;	// Unit became T3 in v9.3
+		canbuild24=CORSPUN;		// Unit became T3 in v9.3
+
+		canbuild25=CORBUZZ;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[CORECSA]
+		{
+		canbuild1=CORAAP;
+
+		canbuild2=COROMNI;
+		canbuild3=CORSFUS;
+		canbuild4=CORMAS;
+		canbuild5=CORNOVA;
+		canbuild6=CORVAULT;
+
+		canbuild7=CORTECH;
+		canbuild8=CORSILO;
+		canbuild9=CORSHGEN;
+		canbuild10=CORSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=CORASY;		// CORLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=CORAHP;		// CORVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=CORAP;
+		canbuild14=CORSY;
+		canbuild15=CORHP;
+
+		canbuild16=CORASY;		// CORALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=CORAHP;		// CORAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=CORASY;
+		canbuild19=CORAHP;
+
+		canbuild20=CORFAB;
+
+		canbuild21=CORUCH;		// Added v9.6 Experimental Unit Foundry
+		canbuild22=CORUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=CORFIELD;	// Unit became T3 in v9.3
+		canbuild24=CORSPUN;		// Unit became T3 in v9.3
+		}
+	[CORECS]
+		{
+		canbuild1=CORUWMAS;
+
+//		Following factories are v9.0.0 additions
+		canbuild2=CORAPLAT;		// CORLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild3=CORFAHP;		// CORVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild4=CORPLAT;
+		canbuild5=CORSY;
+		canbuild6=CORFHP;
+
+		canbuild7=CORAPLAT;		// CORALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild8=CORFAHP;		// CORAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild9=CORAPLAT;
+		canbuild10=CORFAHP;
+
+		canbuild11=CORESY;		// Added v9.6 Experimental Unit Foundry
+		canbuild12=CORESPEN;	// Added v9.4 Ultra Submarine Pen
+
+		canbuild13=CORASY;
+
+		canbuild14=CORUCH;		// Added v9.7 Fleet Shipyard
+		}
+	[CORECH]
+		{
+		canbuild1=CORAHP;
+
+		canbuild2=COROMNI;
+		canbuild3=CORSFUS;
+		canbuild4=CORMAS;
+		canbuild5=CORNOVA;
+		canbuild6=CORVAULT;
+
+		canbuild7=CORTECH;
+		canbuild8=CORSILO;
+		canbuild9=CORSHGEN;
+		canbuild10=CORSMB;
+
+//		Following factories are v9.0.0 additions
+		canbuild11=CORAAP;		// CORLAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild12=CORASY;		// CORVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild13=CORAP;
+		canbuild14=CORSY;
+		canbuild15=CORHP;
+
+		canbuild16=CORAAP;		// CORALAB;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild17=CORASY;		// CORAVP;	// Swap with intentional duplicate to lessen chance of stranding units on islands
+		canbuild18=CORAAP;
+		canbuild19=CORASY;
+
+		canbuild20=COREHP;
+
+		canbuild21=CORUCH;		// Added v9.6 Experimental Unit Foundry
+		canbuild22=CORUCH;		// Added v9.7 Fleet Shipyard
+
+		canbuild23=CORFIELD;	// Unit became T3 in v9.3
+		canbuild24=CORSPUN;		// Unit became T3 in v9.3
+
+		canbuild25=CORBUZZ;		// Unit was T3 then T2 in v9.0 then retired in v9.1.1 then revived in v9.8.5
+		}
+	[CORUCH]
+		{
+//		Tier 4 units sorted by ascending BuildTime lessens chance of longest BuildTime having unintended frequency boost skew
+//		All mobile T4 ground units have been amphibious from v9.7 through v9.9
+
+//			canbuild1=CORUCK;		// Experimental Construction Kbot; unit became T3 Patron in v9.9
+//			canbuild2=CORUCK;		// Intentional duplicate boosts chance of building
+
+		canbuild1=CORUCK;		// Added v9.9 Experimental Construction Hovercraft
+
+		canbuild2=CORHFLAG;		// Added v9.9 Despot (Dreadnought Assault Hovercraft)
+
+		canbuild3=CORSKROG;		// Titan (Experimental Command Kbot)
+		canbuild4=CORTSAR;		// Intentional duplicate boosts building chance; small footprint (for T4) helps path finding
+
+		canbuild5=CORLFLAG;		// Imperator (Experimental Assault Command Tank)
+
+		canbuild6=CORFFLAG;		// Eclipse (Siege Assault Dreadnought VTOL)
+
+		canbuild7=CORMKL;		// C.O.R.E. (Contingency Order Restoration Engine)
+
+		canbuild8=CORMS;		// Zenith (Central Consciousness Command Ship)
+
+		canbuild9=CORZIG;		// Added v9.8.5 Shaper (Peripheral Consciousness Intel Center)
+
+		canbuild10=CORBFG;		// Added v9.8.5 B.F.G. (Experimental Mass Antimatter Cannon)
+
+		canbuild11=CORBFG;		// Added v9.9 Experimental Construction Hovercraft
+
+		canbuild12=CORHFLAG;		// Added v9.9 Despot (Dreadnought Assault Hovercraft)
+
+		canbuild13=CORUSUB;		// Added v9.9 Vortex (Strategic Command Submarine)
+
+		canbuild14=CORUSCAR;		// Anchorage (Fleet Carrier)
+
+		canbuild15=CORFLAG;		// Sovereign (Flag Ship)
+
+		canbuild16=CORFFLAG;		// Eclipse (Siege Assault Dreadnought VTOL)
+
+		canbuild17=CORMS;		// Zenith (Central Consciousness Command Ship)
+		}
+
+/*	Following unit's future is uncertain, currently nonexistent in v9.1.0_TEST_29
+	[CORCOM_SUP]
+		{
+		canbuild1=CORSOLAR;
+		canbuild2=CORWIN;
+		canbuild3=CORESTOR;
+		canbuild4=CORMSTOR;
+		canbuild5=CORMEX;
+		canbuild6=CORMAKR;
+
+		canbuild7=CORLLT;
+		canbuild8=CORRAD;
+		canbuild9=CORDRAG;
+		canbuild10=CORRL;
+		canbuild11=CORHLT;
+		canbuild12=CORPUN;
+
+		canbuild13=CORUWMFUS;
+		canbuild14=CORTIDE;
+		canbuild15=CORUWES;
+		canbuild16=CORUWMS;
+		canbuild17=CORUWMEX;
+		canbuild18=CORFMKR;
+
+		canbuild19=CORTL;
+		canbuild20=CORSONAR;
+		canbuild21=CORFDRAG;
+		canbuild22=CORFRT;
+		canbuild23=CORFHLT;
+		canbuild24=CORFPUN;
+
+		canbuild25=CORLAB;
+		canbuild26=CORVP;
+		canbuild27=CORAP;
+		canbuild28=CORSY;
+		canbuild29=CORHP;
+		canbuild30=CORFHP;
+
+		canbuild31=CORFLLT;
+		canbuild32=CORGEO;
+
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		Maintain but comment out canbuild above canbuild32 limit to reduce "Access violation: Illegal read"
+//		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+		canbuild33=CORGEN;
+		canbuild34=CORASP;
+		canbuild35=;			// CORPLAS;		// Unit has become T2
+//		canbuild36=CORGATE;
+
+		canbuild37=CORFAB;
+		canbuild38=CORARAD;
+		canbuild39=CORFUS;
+		canbuild40=CORMOHO;
+		canbuild41=CORINT;
+		canbuild42=CORMMKR;
+
+		canbuild43=CORDOOM;
+		canbuild44=CORFMD;
+		canbuild45=CORFORT;
+		canbuild46=CORFLAK;
+		canbuild47=;			// CORVIPE;		// Unit became T1 then retired in v9.1.1
+		canbuild48=;			// CORTOAST;	// Unit became T1 then retired in v9.1.1
+
+		canbuild49=CORGANT;
+		canbuild50=CORJAMMER;
+		canbuild51=CORSES;
+		canbuild52=CORSMS;
+//		canbuild53=CORTRON;
+		canbuild54=CORSPUN;
+
+		canbuild55=CORESY;
+		canbuild56=CORASON;
+		canbuild57=CORUWFUS;
+		canbuild58=CORUWMOHO;
+		canbuild59=CORATL;
+		canbuild60=CORUWMMM;
+
+//		canbuild61=CORPLAT;
+
+		canbuild62=CORCHEAT;
+		canbuild63=CORUWCHEAT;
+		canbuild64=CORFIELD;
+		}
+*/
+	[CORASP]
+		{
+		canbuild1=CORASP_UPGRADE;		// Unit retired in v9.1.1 then revived in v9.3
+		canbuild2=CORASP_UPGRADE;
+		}
+	[CORHLT]
+		{
+		canbuild1=CORHLT_UPGRADE;
+		canbuild2=CORHLT_UPGRADE;
+		}
+	[CORGEO]
+		{
+		canbuild1=CORGEO_UPGRADE;
+		}
+	[CORPUN]
+		{
+		canbuild1=CORPUN_UPGRADE;
+		canbuild2=CORPUN_UPGRADE;
+		}
+	[CORFUS]
+		{
+		canbuild1=CORFUS_UPGRADE;
+		}
+	[CORINT]
+		{
+		canbuild1=CORINT_UPGRADE;
+		canbuild2=CORINT_UPGRADE;
+		}
+	[CORSFUS]
+		{
+		canbuild1=CORSFUS_UPGRADE;
+		}
+/*	[CORNOVA]
+		{
+		canbuild1=CORNOVA_UPGRADE;
+		}
+	[CORFMD]
+		{
+		canbuild1=ARMATLAS;
+		canbuild2=CORVALK;
+		}
+	[CORCARRY]
+		{
+		canbuild1=CORMAKEANTI;
+		}
+	[CORTRON]
+		{
+		canbuild1=TRONMAKENUKE;
+		}
+	[CORSILO]
+		{
+		canbuild1=ARMATLAS;
+		canbuild2=CORVALK;
+		}
+*/
+	}

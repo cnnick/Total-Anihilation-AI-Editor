@@ -1,0 +1,306 @@
+Map AI
+
+Map packs
+	ACMAPS
+	btmaps
+	ccmaps
+	Featured_maps
+	TA_Zero_Maps
+
+Map						AI
+
+Brimstone Steppes				DEFAULT                                                                         
+Crystal Gorge					DEFAULT                                                                         
+Heated Argument					DEFAULT                                                                         
+Hiemal Duel					DEFAULT                                                                         
+Highland Hellscape				DEFAULT                                                                         
+Howling Abyss					DEFAULT                                                                         
+Metallurgy					DEFAULT                                                                         
+Power Core					DEFAULT                                                                         
+Raindance					DEFAULT                                                                         
+River of Flame					DEFAULT                                                                         
+Scramble					AirBattle                                                                       
+Torkan Passage					DEFAULT                                                                         
+Convex Archipelago				DEFAULT                                                                         
+A New Core Planet				DEFAULT                                                                         
+A Plethora of Ponds				DEFAULT                                                                         
+Abe*s Atoll					DEFAULT                                                                         
+Abysmal Lake					DEFAULT                                                                         
+Acid Foursome					Acid                                                                            
+Acid Pools					Hover                                                                           
+Acid Trip					Acid                                                                            
+Rockwood Forrest				Adamantine                                                                      
+Aqua Verdigris					ACID                                                                            
+Assault on Suburbia				Hover                                                                           
+Barren Luna					GROUNDZERO                                                                      
+Battle Of The Hills				DEFAULT                                                                         
+Beta Tropics (Coasts)				McnTerra (Naval Series)                                                         
+Beta Tropics					McnTerra                                                                        
+Biggie Biggs					AirBattle                                                                       
+Birtish Empire					DEFAULT                                                                         
+Blazters Beach					Beach                                                                           
+Block Wars					Metal                                                                           
+Bogs of War					SeaBattle                                                                       
+Brain Coral					Waterwrld                                                                       
+Brilliant Cut Lake				SEABATTLE                                                                       
+Canal Crossing					HOVER                                                                           
+MagicLand					DEFAULT                                                                         
+Cavedog Links Country Club			Hover                                                                           
+Center Command					Devide                                                                          
+Central Park					DEFAULT                                                                         
+Chasm						DEFAULT                                                                         
+Checker Ponds					Acid                                                                            
+City of Angels					AirBattle                                                                       
+City of doom					DEFAULT                                                                         
+Untitled Map					Dover                                                                           
+Cluster Freak					AirBattle                                                                       
+Coast to Coast 2 R				SeaBattle                                                                       
+ren's Coast to Coast 2				SeaBattle                                                                       
+Shew Drop					DEFAULT                                                                         
+Controlled Burn					DEFAULT                                                                         
+Core Prime Industrial Area			Metal                                                                           
+Coremageddon					Metal                                                                           
+Crater Islands					SeaBattle                                                                       
+Crater pond					Crater Pond                                                                     
+Cream island					DEFAULT                                                                         
+Crystal Cracked					SeaBattle                                                                       
+Crystal Isles					SeaBattle                                                                       
+Crystal Maze					DEFAULT                                                                         
+Crystal Treasure Island				DEFAULT                                                                         
+DARKBASE 3000					DEFAULT                                                                         
+Death Valley					deathvalley                                                                     
+Deep Blue Sea					Waterwrld                                                                       
+Desert 4-some					Default                                                                         
+Desert Maze					DEFAULT                                                                         
+Desert of Death 2				DeathValley                                                                     
+Devils Towers					DevilsTowers                                                                    
+Dire Straits					Hover                                                                           
+East Indeez					SeaBattle                                                                       
+Eastside Westside				Urban                                                                           
+Empty planet					DEFAULT                                                                         
+ES-TrueLoveInTheMud				Hover                                                                           
+Expanded Confluence				Hover                                                                           
+Flasheller					DEFAULT                                                                         
+Flooded Glaciers				SeaBattle                                                                       
+Freaky Forest					GZ-Hippie-AI                                                                    
+Friction					SeaBattle                                                                       
+Frozen Diamond Island				DEFAULT                                                                         
+Frozen Islands					Waterwrld                                                                       
+Gas Bag Forests					Acid                                                                            
+Gasplant Pain					DEFAULT                                                                         
+GatorLands					Hover                                                                           
+Untitled Map					DEFAULT                                                                         
+Gone Coastal					DEFAULT                                                                         
+Great Divide 2					DEFAULT                                                                         
+Green Blaze					DEFAULT                                                                         
+Green cream island				DEFAULT                                                                         
+Green Fort					DEFAULT                                                                         
+Green Lake					DEFAULT                                                                         
+High Mtn Meadows				AirLand_SH                                                                      
+Higher Ground					AirBattle                                                                       
+Hofmann's Islands				DEFAULT                                                                         
+Ice Scream					Hover                                                                           
+Icy Bergs					Waterwrld                                                                       
+John's Pass 2					DEFAULT                                                                         
+John's Pass					Hover                                                                           
+Lake Shore					DEFAULT                                                                         
+Long Lakes					DEFAULT                                                                         
+Lusch Puppy					AirBattle                                                                       
+Luschaven					Hover                                                                           
+Luschinfloggen					DEFAULT                                                                         
+Megatjong					DEFAULT                                                                         
+Metal For Three v.3				SeaBattle                                                                       
+Metal Fort					Metal                                                                           
+Metal Gridlock					AIR                                                                             
+Metal Heck 2					DEFAULT                                                                         
+Metal Isles					SeaBattle                                                                       
+Moon Quartet					DEFAULT                                                                         
+Welcome To The ARM's Moon			DEFAULT                                                                         
+New green Fort					DEFAULT                                                                         
+oooweeeeeee					AirBattle                                                                       
+Pearl Harbor					DEFAULT                                                                         
+Pillopeens					SeaBattle                                                                       
+Plains and Passes				DEFAULT                                                                         
+Polar Range					DEFAULT                                                                         
+Polyp Fields					Waterwrld                                                                       
+Red River North					Hover                                                                           
+Red River					Hover                                                                           
+Ror Shock					SeaBattle                                                                       
+Sail Away					SeaBattle                                                                       
+Sail Here					DEFAULT                                                                         
+Sector 410b					Hover                                                                           
+Show Down					DEFAULT                                                                         
+Slate Gordon					AirBattle                                                                       
+Slated Fate					DEFAULT                                                                         
+Slovenowank					DEFAULT                                                                         
+Snewp						DEFAULT                                                                         
+Starfish Isle					DEFAULT                                                                         
+Steel Jungle					Urban                                                                           
+Surface Meltdown				Acid                                                                            
+Temblorian Mist					AirBattle                                                                       
+Terra Forte Beta 2				DEFAULT                                                                         
+The Amazon					SeaBattle                                                                       
+The Barrier Reef				SeaBattle                                                                       
+The Bayou					Hover                                                                           
+The Level					McnTerra (Naval Series)                                                         
+Three Coasts					DEFAULT                                                                         
+TORFY						DEFAULT                                                                         
+Town & Country					Urban                                                                           
+Trout Farm					DEFAULT                                                                         
+16 x 16  Wargrounds         			DEFAULT                                                                         
+Water Divide					DEFAULT                                                                         
+Water Plains					SeaBattle                                                                       
+Wretched Ridges					DEFAULT                                                                         
+Yerrot Countryside				                                                                                
+Z_GOW6						DEFAULT                                                                         
+Shew Drop					DEFAULT                                                                         
+Z_longisland_modified				deathvalley                                                                     
+Z_mars_land_3V3					DEFAULT                                                                         
+Z_Metal Plain					Metal                                                                           
+Z_Metal_Plain_v2				Metal                                                                           
+z_moonisland_v4					SeaBattle                                                                       
+The Barrier Reef				SeaBattle                                                                       
+						                                                                                
+
+Map packs
+	totala1.hpi -> totala4.hpi
+	tactics1.hpi-> tactics8.hpi
+
+Map						AI
+
+A Gentle Time on Lunarland			DEFAULT	  
+A Shortage of Water				DEFAULT	
+Air Assault					AirBattle
+Ambush on Novespin IV				DEFAULT	
+Anteer Strait					SeaBattle
+Ashap Plateau						
+Attack on Barrack				DEFAULT	
+Backs to the Sea				DEFAULT	
+Battle of Ansapp Sea				SeaBattle
+Battle of Chimo Island				DEFAULT	
+Bertha Cleansing				DEFAULT	
+Between Two Lakes				DEFAULT	
+Black Box					DEFAULT	
+Brawler Buildup					DEFAULT	
+Caldera Run					SeaBattle
+Can Rush					DEFAULT	
+Capture Hanan Base				DEFAULT	
+Capturing Terseknos				SeaBattle
+Caranat Conquest				DEFAULT	
+Charging the Line				DEFAULT	
+Cleanup on Kral					Acid	
+Cloaked in the Spires				DEFAULT	
+Coast to Coast					SeaBattle
+Running Battle					DEFAULT	
+Coordinated Assault				DEFAULT	
+Crawling Destruction				DEFAULT	
+Nomad's Descent					DEFAULT	
+Crossing Kerrap Shallows			DEFAULT	
+Crossing the Long Lakes				SeaBattle
+Crossing Two Rivers				DEFAULT	
+Cutoff in Sector 6895				DEFAULT	
+Darkside					DEFAULT	
+Dawn Directive					AirBattle
+Destroy the FMD					DEFAULT	
+Disintegrator Alley				DEFAULT	
+Dogfight over Grantham Deep			AirBattle
+Emerald Seamount				DEFAULT	
+Encounter on the Coral Sea			Waterwrld
+Etorrep Glacier						
+Evad River Confluence				AirBattle
+Fighting Under Fire				DEFAULT	
+Prasad Firebase					DEFAULT	
+Firebase					DEFAULT	
+Force the Strait				AirBattle
+Forest Base 129					Missions
+Fortitude Race					DEFAULT	
+Foxholes						
+Fullmoon					DEFAULT	
+Gods of War					SeaBattle
+Great Divide						
+Greenhaven					DEFAULT	
+Guardian Hill					DEFAULT	
+Guditha Pass					DEFAULT	
+Hot Day and Hull Down				DEFAULT	
+Hundred Isles						
+Hunting Nhanons					DEFAULT	
+Ice Base Assault				DEFAULT	
+Ice Base Baryn					DEFAULT	
+Intimdator Ridge				DEFAULT	
+Intimidator Rising				DEFAULT	
+Invasion of Destral II				SeaBattle
+Island Hopping					SeaBattle
+Islands of Grace				DEFAULT	
+Jungle Journey					DEFAULT	
+Kaki Island Assault				DEFAULT	
+Kbot Mop Up					DEFAULT	
+Kill the Middle					AirBattle
+King of the Hill					
+Krocark Firebase Complex			MISSIONS
+Kudzu Base					MISSIONS
+Laser Plain					DEFAULT	
+Lava & Two Hills				AirBattle
+Lava Alley						
+Lava Highground					DEFAULT	
+Lava Mania					DEFAULT	
+Lava Run						
+Less Refeshing Sea				Acid	
+Lightning Recon					DEFAULT	
+Lipar Pass					DEFAULT	
+Meraldi Amphibious Assault			SeaBattle
+Mesa Run					MISSIONS
+Metal Heck						
+Metal Maze					DEFAULT	
+Miniement Landing				DEFAULT	
+Mist Bombers					MISSIONS
+New Moon					DEFAULT	
+Over Crude Water				AirBattle
+Painted Desert						
+Peaceful Pools					DEFAULT	
+Pincushion					DEFAULT	
+Pursuit						DEFAULT	
+Raid on Vetes					DEFAULT	
+Red Hot Lava					DEFAULT	
+Red Planet					DEFAULT	
+Red Triangle						
+Reducing the Yrdac Island			DEFAULT	
+Ring Atoll						
+Forest Base Alpha				DEFAULT	
+Rock Alley					DEFAULT	
+Rock Candy Mountains				DEFAULT	
+Forest Base Alpha				DEFAULT	
+Seed Crystal					DEFAULT	
+Seven Islands					Metal	
+Sherwood					DEFAULT	
+Shore to Shore					SeaBattle
+Silent Service					DEFAULT	
+Sink the Battleship				DEFAULT	
+Skirmish on the Sand				AirBattle
+Solidspire Base					DEFAULT	
+Spider Ambush					DEFAULT	
+Spire Sports					DEFAULT	
+Steel Stronghold				MISSIONS
+Sub Hunting					DEFAULT	
+Surprise at Labrodorite				DEFAULT	
+Taking Island 445				DEFAULT	
+The Cold Place						
+The Desert Triad				AirBattle
+The Pass						
+Radar Love					DEFAULT	
+I08,The Ravenstein Run				DEFAULT	
+Retorb Flood Basin				DEFAULT	
+The Vulcans Forge Hotspot			DEFAULT	
+The Wayneston Ford Engagement			DEFAULT	
+Thermal Exchange Causeway			SeaBattle
+Thrashing a Rear Guard				DEFAULT	
+Three Passes					DEFAULT	
+Titanium Fist Bay				MISSIONS
+Two Continents					AirBattle
+Two Ore Coast					DEFAULT	
+Waiting						DEFAULT	
+Wet and Dry					DEFAULT	
+Yerrot Foothills				DEFAULT	
+Yerrot Mountains					
+R33 Yollets Rain Forest				DEFAULT	
+Zedtopt Hotsprings				DEFAULT	
+Zipper Attack					DEFAULT	
